@@ -1,0 +1,12 @@
+{
+  "name": "library-management-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm run start --prefix library-managemnet-backend",
+    "start:backend": "npm run start --prefix library-managemnet-backend",
+    "start:frontend": "npm run start --prefix library-managemnet-frontend",
+    "dev:backend": "npm run dev --prefix library-managemnet-backend",
+    "dev:frontend": "npm run dev --prefix library-managemnet-frontend"
+  }
+}

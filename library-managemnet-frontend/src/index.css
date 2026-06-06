@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply m-0 min-h-screen bg-slate-100 font-body text-slate-900;
+  background-image: radial-gradient(circle at top, rgba(13, 148, 136, 0.14), transparent 40%), linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+a {
+  @apply text-inherit no-underline;
+}
+
+button {
+  @apply transition;
+}
+
+input,
+select,
+textarea {
+  @apply rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100;
+}
