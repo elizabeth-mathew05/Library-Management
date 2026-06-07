@@ -28,6 +28,7 @@ const borrowSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    overdueReminderSentAt: { type: Date, default: null },
     status: {
       type: String,
       enum: ['borrowed', 'returned', 'overdue'],

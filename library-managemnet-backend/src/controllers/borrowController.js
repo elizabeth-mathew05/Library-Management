@@ -19,6 +19,46 @@ const calculateLateFee = (dueDate, returnDate) => {
   return lateDays * lateFeePerDay;
 };
 
+const processOverdueReminders = async ({ force = false } = {}) => {
+  const filters = {
+    returnedAt: null,
+    dueDate: { $lt: new Date() }
+  };
+
+  if (!force) {
+    filters.overdueReminderSentAt = null;
+  }
+
+  const borrows = await Borrow.find(filters)
+    .populate('user', 'email name')
+    .populate('book', 'title');
+
+  const reminders = await Promise.all(
+    borrows.map(async (borrow) => {
+      borrow.status = 'overdue';
+      borrow.overdueReminderSentAt = new Date();
+      await borrow.save();
+
+      await Notification.create({
+        user: borrow.user._id,
+        type: 'overdue',
+        title: 'Overdue book reminder',
+        message: `${borrow.book.title} is overdue. Please return it as soon as possible.`
+      });
+
+      await sendEmail({
+        to: borrow.user.email,
+        subject: 'Library overdue reminder',
+        text: `${borrow.book.title} is overdue. Please return it as soon as possible.`
+      });
+
+      return borrow._id;
+    })
+  );
+
+  return reminders;
+};
+
 const getBorrows = asyncHandler(async (req, res) => {
   const filters = req.user.role === 'user' ? { user: req.user._id } : {};
   const borrows = await Borrow.find(filters)
@@ -138,36 +178,9 @@ const returnBook = asyncHandler(async (req, res) => {
 });
 
 const sendOverdueReminders = asyncHandler(async (req, res) => {
-  const borrows = await Borrow.find({
-    returnedAt: null,
-    dueDate: { $lt: new Date() }
-  })
-    .populate('user', 'email name')
-    .populate('book', 'title');
-
-  const reminders = await Promise.all(
-    borrows.map(async (borrow) => {
-      borrow.status = 'overdue';
-      await borrow.save();
-
-      await Notification.create({
-        user: borrow.user._id,
-        type: 'overdue',
-        title: 'Overdue book reminder',
-        message: `${borrow.book.title} is overdue. Please return it as soon as possible.`
-      });
-
-      await sendEmail({
-        to: borrow.user.email,
-        subject: 'Library overdue reminder',
-        text: `${borrow.book.title} is overdue. Please return it as soon as possible.`
-      });
-
-      return borrow._id;
-    })
-  );
+  const reminders = await processOverdueReminders({ force: false });
 
   res.json({ message: 'Overdue reminders processed', remindersSent: reminders.length });
 });
 
-export { getBorrows, borrowBook, returnBook, sendOverdueReminders };
+export { getBorrows, borrowBook, returnBook, sendOverdueReminders, processOverdueReminders };

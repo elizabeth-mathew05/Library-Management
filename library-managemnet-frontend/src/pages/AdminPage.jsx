@@ -20,6 +20,7 @@ export default function AdminPage() {
   const [showBookModal, setShowBookModal] = useState(false);
   const [announcement, setAnnouncement] = useState({ title: '', message: '' });
   const [message, setMessage] = useState('');
+  const [isRemindersLoading, setIsRemindersLoading] = useState(false);
 
   const loadAdminData = async () => {
     const [reportResponse, booksResponse] = await Promise.all([
@@ -104,6 +105,18 @@ export default function AdminPage() {
     }
   };
 
+  const handleSendOverdueReminders = async () => {
+    setIsRemindersLoading(true);
+    try {
+      const response = await api.post('/borrows/overdue-reminders');
+      setMessage(`✓ ${response.data.message}. ${response.data.remindersSent} reminders sent.`);
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Unable to send reminders');
+    } finally {
+      setIsRemindersLoading(false);
+    }
+  };
+
   const sendAnnouncement = async (event) => {
     event.preventDefault();
     try {
@@ -177,8 +190,12 @@ export default function AdminPage() {
           <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
             <h2 className="font-display text-3xl text-slate-950">Overdue reminders</h2>
             <p className="mt-2 text-slate-600">Trigger overdue email reminders and in-app notifications.</p>
-            <button onClick={triggerOverdueReminders} className="mt-5 rounded-2xl bg-amber-400 px-4 py-3 font-semibold text-slate-950">
-              Send reminders
+            <button 
+              onClick={handleSendOverdueReminders}
+              disabled={isRemindersLoading}
+              className="mt-5 rounded-2xl bg-amber-400 px-4 py-3 font-semibold text-slate-950 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isRemindersLoading ? 'Sending...' : 'Send reminders'}
             </button>
           </article>
           <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">

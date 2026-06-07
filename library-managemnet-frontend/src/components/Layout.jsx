@@ -6,6 +6,7 @@ const links = [
   { to: '/books', label: 'Books' },
   { to: '/borrowed', label: 'Borrowed' },
   { to: '/reservations', label: 'Reservations' },
+  { to: '/notifications', label: 'Notifications' },
   { to: '/payments', label: 'Payments' },
   { to: '/profile', label: 'Profile' }
 ];

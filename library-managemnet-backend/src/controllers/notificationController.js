@@ -35,4 +35,14 @@ const markNotificationRead = asyncHandler(async (req, res) => {
   res.json(notification);
 });
 
-export { getNotifications, createAnnouncement, markNotificationRead };
+const deleteNotification = asyncHandler(async (req, res) => {
+  const notification = await Notification.findById(req.params.id);
+  if (!notification) {
+    res.status(404);
+    throw new Error('Notification not found');
+  }
+  await Notification.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Notification deleted' });
+});
+
+export { getNotifications, createAnnouncement, markNotificationRead, deleteNotification };
