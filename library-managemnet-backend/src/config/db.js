@@ -30,6 +30,15 @@ const normalizeMongoUri = (rawUri) => {
   }
 };
 
+const getSafeMongoTarget = (mongoUri) => {
+  try {
+    const url = new URL(mongoUri);
+    return `${url.protocol}//${url.hostname}${url.pathname || ''}`;
+  } catch {
+    return 'unknown-target';
+  }
+};
+
 const connectDatabase = async () => {
   const envCandidates = [
     ['MONGODB_URI', process.env.MONGODB_URI],
@@ -62,9 +71,18 @@ const connectDatabase = async () => {
   }
 
   const normalizedMongoUri = normalizeMongoUri(mongoUri);
+  const safeTarget = getSafeMongoTarget(normalizedMongoUri);
 
-  await mongoose.connect(normalizedMongoUri);
-  console.log(`MongoDB connected using ${sourceKey}`);
+  try {
+    await mongoose.connect(normalizedMongoUri);
+    console.log(`MongoDB connected using ${sourceKey} -> ${safeTarget}`);
+  } catch (error) {
+    const reason = error?.code || error?.name || 'UnknownError';
+    throw new Error(
+      `MongoDB connection failed using ${sourceKey} -> ${safeTarget}. Reason: ${reason}. ` +
+        'Check Render env var value, Atlas Network Access IP allowlist, and DB user credentials.'
+    );
+  }
 };
 
 export default connectDatabase;
