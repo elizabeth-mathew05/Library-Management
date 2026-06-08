@@ -56,7 +56,11 @@ const connectDatabase = async () => {
   const sourceKey = matched?.[0];
 
   if (!mongoUri) {
-    throw new Error('MongoDB connection string is not configured. Set MONGODB_URI, MONGO_URI, or DATABASE_URL in your deployment environment.');
+    if (isProduction) {
+      throw new Error('MongoDB connection string is not configured. Set MONGODB_URI or DATABASE_URL in your deployment environment.');
+    }
+
+    throw new Error('MongoDB connection string is not configured. Set MONGODB_URI, MONGO_URI, or DATABASE_URL.');
   }
 
   const isLocalMongo = /mongodb:\/\/(127\.0\.0\.1|localhost)/i.test(mongoUri);
