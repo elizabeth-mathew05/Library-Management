@@ -4,10 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const connectDatabase = async () => {
-  const mongoUri = process.env.MONGO_URI;
+  const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
   if (!mongoUri) {
-    throw new Error('MONGO_URI is not configured');
+    throw new Error('MongoDB connection string is not configured. Set MONGODB_URI or MONGO_URI.');
   }
 
   await mongoose.connect(mongoUri);
