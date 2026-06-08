@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const defaultDatabaseName = process.env.MONGO_DB_NAME || 'library_management';
+const connectRetries = Number(process.env.MONGO_CONNECT_RETRIES || 5);
+const connectRetryDelayMs = Number(process.env.MONGO_CONNECT_RETRY_DELAY_MS || 5000);
 
 const normalizeMongoUri = (rawUri) => {
   try {
@@ -40,9 +42,12 @@ const getSafeMongoTarget = (mongoUri) => {
 };
 
 const connectDatabase = async () => {
+  const isProduction = String(process.env.NODE_ENV || '').toLowerCase() === 'production';
+
   const envCandidates = [
     ['MONGODB_URI', process.env.MONGODB_URI],
-    ['MONGO_URI', process.env.MONGO_URI],
+    // Keep MONGO_URI for local backward compatibility only.
+    ...(!isProduction ? [['MONGO_URI', process.env.MONGO_URI]] : []),
     ['DATABASE_URL', process.env.DATABASE_URL]
   ];
 
@@ -55,7 +60,6 @@ const connectDatabase = async () => {
   }
 
   const isLocalMongo = /mongodb:\/\/(127\.0\.0\.1|localhost)/i.test(mongoUri);
-  const isProduction = String(process.env.NODE_ENV || '').toLowerCase() === 'production';
   const hasPlaceholder = /<user>|<password>|<cluster>/i.test(mongoUri);
 
   if (hasPlaceholder) {
@@ -73,15 +77,28 @@ const connectDatabase = async () => {
   const normalizedMongoUri = normalizeMongoUri(mongoUri);
   const safeTarget = getSafeMongoTarget(normalizedMongoUri);
 
-  try {
-    await mongoose.connect(normalizedMongoUri);
-    console.log(`MongoDB connected using ${sourceKey} -> ${safeTarget}`);
-  } catch (error) {
-    const reason = error?.code || error?.name || 'UnknownError';
-    throw new Error(
-      `MongoDB connection failed using ${sourceKey} -> ${safeTarget}. Reason: ${reason}. ` +
-        'Check Render env var value, Atlas Network Access IP allowlist, and DB user credentials.'
-    );
+  for (let attempt = 1; attempt <= connectRetries; attempt += 1) {
+    try {
+      await mongoose.connect(normalizedMongoUri);
+      console.log(`MongoDB connected using ${sourceKey} -> ${safeTarget}`);
+      return;
+    } catch (error) {
+      const reason = error?.code || error?.name || 'UnknownError';
+      const isLastAttempt = attempt === connectRetries;
+
+      if (isLastAttempt) {
+        throw new Error(
+          `MongoDB connection failed using ${sourceKey} -> ${safeTarget}. Reason: ${reason}. ` +
+            'Check Render env var value, Atlas Network Access IP allowlist, and DB user credentials.'
+        );
+      }
+
+      console.warn(
+        `MongoDB connect attempt ${attempt}/${connectRetries} failed (${reason}). Retrying in ${connectRetryDelayMs}ms...`
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, connectRetryDelayMs));
+    }
   }
 };
 
