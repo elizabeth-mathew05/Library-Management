@@ -3,6 +3,33 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const defaultDatabaseName = process.env.MONGO_DB_NAME || 'library_management';
+
+const normalizeMongoUri = (rawUri) => {
+  try {
+    const url = new URL(rawUri);
+
+    // If no DB name is provided in URI path, use default database.
+    if (!url.pathname || url.pathname === '/') {
+      url.pathname = `/${defaultDatabaseName}`;
+    }
+
+    // For Atlas SRV strings, include sensible defaults when absent.
+    if (url.protocol === 'mongodb+srv:') {
+      if (!url.searchParams.has('retryWrites')) {
+        url.searchParams.set('retryWrites', 'true');
+      }
+      if (!url.searchParams.has('w')) {
+        url.searchParams.set('w', 'majority');
+      }
+    }
+
+    return url.toString();
+  } catch {
+    return rawUri;
+  }
+};
+
 const connectDatabase = async () => {
   const envCandidates = [
     ['MONGODB_URI', process.env.MONGODB_URI],
@@ -20,6 +47,13 @@ const connectDatabase = async () => {
 
   const isLocalMongo = /mongodb:\/\/(127\.0\.0\.1|localhost)/i.test(mongoUri);
   const isProduction = String(process.env.NODE_ENV || '').toLowerCase() === 'production';
+  const hasPlaceholder = /<user>|<password>|<cluster>/i.test(mongoUri);
+
+  if (hasPlaceholder) {
+    throw new Error(
+      `Invalid MongoDB URI from ${sourceKey}: placeholder values detected (<user>, <password>, <cluster>). Replace with real MongoDB Atlas values.`
+    );
+  }
 
   if (isProduction && isLocalMongo) {
     throw new Error(
@@ -27,7 +61,9 @@ const connectDatabase = async () => {
     );
   }
 
-  await mongoose.connect(mongoUri);
+  const normalizedMongoUri = normalizeMongoUri(mongoUri);
+
+  await mongoose.connect(normalizedMongoUri);
   console.log(`MongoDB connected using ${sourceKey}`);
 };
 
