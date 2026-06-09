@@ -4,10 +4,16 @@ import { startOverdueReminderScheduler } from './services/overdueReminderSchedul
 
 const port = process.env.PORT || 5000;
 
+const validateRequiredEnv = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('Missing required environment variable: JWT_SECRET. Set it in deployment environment and redeploy.');
+  }
+};
+
 const startServer = async () => {
+  validateRequiredEnv();
   await connectDatabase();
   startOverdueReminderScheduler();
-
   app.listen(port, () => {
     console.log(`Library backend listening on http://localhost:${port}`);
   });
