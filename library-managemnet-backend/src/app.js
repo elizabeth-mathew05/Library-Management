@@ -22,6 +22,15 @@ const parseOrigins = (value = '') =>
     .map((origin) => origin.trim())
     .filter(Boolean);
 
+const isTrustedNetlifyOrigin = (origin = '') => {
+  try {
+    const url = new URL(origin);
+    return url.protocol === 'https:' && url.hostname.endsWith('.netlify.app');
+  } catch {
+    return false;
+  }
+};
+
 const allowedOrigins = new Set([
   ...parseOrigins(process.env.FRONTEND_URLS),
   ...parseOrigins(process.env.FRONTEND_URL),
@@ -40,6 +49,11 @@ app.use(
       }
 
       if (allowedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      if (isTrustedNetlifyOrigin(origin)) {
         callback(null, true);
         return;
       }
