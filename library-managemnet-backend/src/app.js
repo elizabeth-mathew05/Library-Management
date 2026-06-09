@@ -25,6 +25,7 @@ const parseOrigins = (value = '') =>
 const allowedOrigins = new Set([
   ...parseOrigins(process.env.FRONTEND_URLS),
   ...parseOrigins(process.env.FRONTEND_URL),
+  'https://library-managemnet-elz.netlify.app',
   'http://localhost:5173'
 ]);
 
