@@ -13,7 +13,7 @@ const resolveApiBaseUrl = () => {
     return 'http://localhost:5000/api';
   }
 
-  return 'https://library-management-14.onrender.com/api';
+  return '/api';
 };
 
 const api = axios.create({
