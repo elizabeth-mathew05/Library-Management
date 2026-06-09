@@ -1,7 +1,23 @@
 import axios from 'axios';
 
+const resolveApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5000/api';
+  }
+
+  return 'https://library-managemnet-backend.onrender.com/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api'
+  baseURL: resolveApiBaseUrl()
 });
 
 api.interceptors.request.use((config) => {
