@@ -27,7 +27,7 @@ export default function App() {
         <Route path="/books/:id" element={<ProtectedRoute><BookDetailsPage /></ProtectedRoute>} />
         <Route path="/borrowed" element={<ProtectedRoute><BorrowedBooksPage /></ProtectedRoute>} />
         <Route path="/reservations" element={<ProtectedRoute><ReservationsPage /></ProtectedRoute>} />
-        <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute roles={['user']}><NotificationsPage /></ProtectedRoute>} />
         <Route path="/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute roles={['librarian', 'admin']}><AdminPage /></ProtectedRoute>} />

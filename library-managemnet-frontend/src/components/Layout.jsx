@@ -1,18 +1,31 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-const links = [
+const commonLinks = [
   { to: '/', label: 'Dashboard' },
   { to: '/books', label: 'Books' },
+  { to: '/profile', label: 'Profile' }
+];
+
+const memberLinks = [
   { to: '/borrowed', label: 'Borrowed' },
   { to: '/reservations', label: 'Reservations' },
   { to: '/notifications', label: 'Notifications' },
-  { to: '/payments', label: 'Payments' },
-  { to: '/profile', label: 'Profile' }
+  { to: '/payments', label: 'Payments' }
+];
+
+const staffListLinks = [
+  { to: '/', label: 'Dashboard' },
+  { to: '/books', label: 'Book List' },
+  { to: '/borrowed', label: 'Borrowed' },
+  { to: '/reservations', label: 'Reservations' },
+  { to: '/payments', label: 'Payments' }
 ];
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
+  const isMember = user?.role === 'user';
+  const visibleLinks = isMember ? [...commonLinks, ...memberLinks] : staffListLinks;
 
   return (
     <div className="min-h-screen">
@@ -23,7 +36,7 @@ export default function Layout({ children }) {
           </Link>
           <nav className="flex flex-wrap items-center gap-3 text-sm">
             {user &&
-              links.map((link) => (
+              visibleLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
@@ -34,16 +47,6 @@ export default function Layout({ children }) {
                   {link.label}
                 </NavLink>
               ))}
-            {user && user.role !== 'user' && (
-              <>
-                <NavLink to="/admin" className="rounded-full bg-amber-400 px-4 py-2 font-semibold text-slate-950">
-                  Admin
-                </NavLink>
-                <NavLink to="/admin/reviews" className="rounded-full bg-white/10 px-4 py-2 font-semibold text-slate-100 hover:bg-white/20">
-                  Reviews
-                </NavLink>
-              </>
-            )}
             {user ? (
               <button onClick={logout} className="rounded-full border border-white/20 px-4 py-2 hover:bg-white/10">
                 Logout

@@ -9,5 +9,5 @@
 - Password: user1@123
 
 ## Librarian
-- Email: librarian1@gamil.com
-- Password: librarian1@123
+- Email: librarian2@gmail.com
+- Password: librarian2@123

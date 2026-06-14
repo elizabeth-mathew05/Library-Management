@@ -164,20 +164,20 @@ export default function NotificationsPage() {
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    {!notification.read && (
+                      {!notification.read && (
+                        <button
+                          onClick={() => handleMarkAsRead(notification._id)}
+                          className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                        >
+                          Mark as read
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleMarkAsRead(notification._id)}
-                        className="px-3 py-1 text-xs font-semibold bg-current bg-opacity-20 rounded-full hover:bg-opacity-30 transition"
+                        onClick={() => handleDeleteNotification(notification._id)}
+                        className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white transition hover:bg-slate-700"
                       >
-                        Mark as read
+                        Delete
                       </button>
-                    )}
-                    <button
-                      onClick={() => handleDeleteNotification(notification._id)}
-                      className="px-3 py-1 text-xs font-semibold bg-current bg-opacity-10 rounded-full hover:bg-opacity-20 transition"
-                    >
-                      Delete
-                    </button>
                   </div>
                 </div>
               </div>

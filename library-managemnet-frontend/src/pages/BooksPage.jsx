@@ -126,6 +126,11 @@ export default function BooksPage() {
   };
 
   const handleBorrow = async (book) => {
+    if (isStaff) {
+      setMessage('Borrowing is available only for normal users');
+      return;
+    }
+
     try {
       await api.post('/borrows', { bookId: book._id, userId: user?.id });
       setMessage(`Borrowed ${book.title}`);
@@ -137,6 +142,11 @@ export default function BooksPage() {
   };
 
   const handleReserve = async (book) => {
+    if (isStaff) {
+      setMessage('Reservations are available only for normal users');
+      return;
+    }
+
     try {
       await api.post('/reservations', { bookId: book._id });
       setMessage(`Reserved ${book.title}`);

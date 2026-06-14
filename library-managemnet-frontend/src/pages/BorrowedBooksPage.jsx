@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function BorrowedBooksPage() {
+  const { user } = useAuth();
+  const isMember = user?.role === 'user';
   const [borrows, setBorrows] = useState([]);
   const [message, setMessage] = useState('');
 
@@ -112,7 +115,7 @@ export default function BorrowedBooksPage() {
                     </p>
                   </td>
                   <td className="py-4">
-                    {!borrow.returnedAt ? (
+                      {!borrow.returnedAt && isMember ? (
                       <button
                         onClick={() => handleReturn(borrow._id)}
                         className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
@@ -123,6 +126,8 @@ export default function BorrowedBooksPage() {
                       >
                         Return
                       </button>
+                      ) : !borrow.returnedAt ? (
+                        <span className="text-xs text-slate-500">View only</span>
                     ) : (
                       <span className="text-xs text-slate-500">Completed</span>
                     )}
