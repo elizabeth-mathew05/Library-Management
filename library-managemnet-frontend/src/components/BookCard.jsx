@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function BookCard({ book, isStaff = false, canReview = false, onBorrow, onReserve, onEdit, onDelete }) {
+export default function BookCard({ book, isStaff = false, canReview = false, onBorrow, onReserve, onEdit, onDelete, canDelete = true }) {
   const canBorrow = Number(book.availableCopies) > 0;
   const showMemberActions = !isStaff;
 
@@ -56,9 +56,11 @@ export default function BookCard({ book, isStaff = false, canReview = false, onB
             <button onClick={() => onEdit?.(book)} className="rounded-full bg-amber-400 px-4 py-2 text-sm font-medium text-slate-950">
               Edit
             </button>
-            <button onClick={() => onDelete?.(book)} className="rounded-full bg-rose-600 px-4 py-2 text-sm font-medium text-white">
-              Delete
-            </button>
+            {canDelete && (
+              <button onClick={() => onDelete?.(book)} className="rounded-full bg-rose-600 px-4 py-2 text-sm font-medium text-white">
+                Delete
+              </button>
+            )}
           </>
         )}
       </div>

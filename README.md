@@ -39,14 +39,19 @@ The backend is responsible for the API used by the frontend. The deployed API ba
 
 ## Demo Credentials
 
-I could not verify any seeded demo credentials in the current workspace snapshot, so no credentials are listed here yet.
+# User Credentials
 
-If you have seeded admin or user accounts, add them below in this format:
+## Admin
+- Email: admin@gmail.com
+- Password: admin123
 
-- Admin email:
-- Admin password:
-- User email:
-- User password:
+## Standalone User
+- Email: user1@gamil.com
+- Password: user1@123
+
+## Librarian
+- Email: librarian2@gmail.com
+- Password: librarian2@123
 
 ## Notes
 

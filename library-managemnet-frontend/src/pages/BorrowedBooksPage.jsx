@@ -5,8 +5,10 @@ import { useAuth } from '../context/AuthContext.jsx';
 export default function BorrowedBooksPage() {
   const { user } = useAuth();
   const isMember = user?.role === 'user';
+  const isStaff = user?.role === 'librarian' || user?.role === 'admin';
   const [borrows, setBorrows] = useState([]);
   const [message, setMessage] = useState('');
+  const [processingReturnId, setProcessingReturnId] = useState(null);
 
   const loadBorrows = async () => {
     const { data } = await api.get('/borrows');
@@ -18,12 +20,20 @@ export default function BorrowedBooksPage() {
   }, []);
 
   const handleReturn = async (borrowId) => {
+    if (processingReturnId) {
+      return;
+    }
+
+    setProcessingReturnId(borrowId);
+
     try {
       await api.patch(`/borrows/${borrowId}/return`);
       setMessage('Book returned successfully');
       loadBorrows();
     } catch (error) {
       setMessage(error.response?.data?.message || 'Unable to return book');
+    } finally {
+      setProcessingReturnId(null);
     }
   };
 
@@ -53,7 +63,11 @@ export default function BorrowedBooksPage() {
     <section className="space-y-6">
       <div className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
         <h1 className="font-display text-4xl text-slate-950">Borrowed Books</h1>
-        <p className="mt-2 text-slate-600">View due dates, late fees, and return your borrowed books. Overdue items are highlighted for immediate attention.</p>
+        <p className="mt-2 text-slate-600">
+          {isStaff
+            ? 'Monitor circulation and process returns for active borrow records.'
+            : 'View due dates, late fees, and return your borrowed books. Overdue items are highlighted for immediate attention.'}
+        </p>
         <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
           <div className="rounded-lg bg-teal-50 p-3 border border-teal-200">
             <p className="text-teal-700 font-semibold">Active Borrows</p>
@@ -115,16 +129,19 @@ export default function BorrowedBooksPage() {
                     </p>
                   </td>
                   <td className="py-4">
-                      {!borrow.returnedAt && isMember ? (
+                      {!borrow.returnedAt && (isMember || isStaff) ? (
                       <button
                         onClick={() => handleReturn(borrow._id)}
+                        disabled={processingReturnId === borrow._id}
                         className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                          borrow.status === 'overdue'
+                          processingReturnId === borrow._id
+                            ? 'cursor-not-allowed bg-slate-200 text-slate-500'
+                            : borrow.status === 'overdue'
                             ? 'bg-rose-600 text-white hover:bg-rose-700'
                             : 'bg-slate-950 text-white hover:bg-slate-800'
                         }`}
                       >
-                        Return
+                        {processingReturnId === borrow._id ? 'Processing...' : isStaff ? 'Process Return' : 'Return'}
                       </button>
                       ) : !borrow.returnedAt ? (
                         <span className="text-xs text-slate-500">View only</span>

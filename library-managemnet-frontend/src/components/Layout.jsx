@@ -1,31 +1,37 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-const commonLinks = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/books', label: 'Books' },
-  { to: '/profile', label: 'Profile' }
-];
-
-const memberLinks = [
-  { to: '/borrowed', label: 'Borrowed' },
-  { to: '/reservations', label: 'Reservations' },
-  { to: '/notifications', label: 'Notifications' },
-  { to: '/payments', label: 'Payments' }
-];
-
-const staffListLinks = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/books', label: 'Book List' },
-  { to: '/borrowed', label: 'Borrowed' },
-  { to: '/reservations', label: 'Reservations' },
-  { to: '/payments', label: 'Payments' }
-];
+const roleLinks = {
+  user: [
+    { to: '/', label: 'Dashboard' },
+    { to: '/books', label: 'Books' },
+    { to: '/borrowed', label: 'Borrowed' },
+    { to: '/reservations', label: 'Reservations' },
+    { to: '/notifications', label: 'Notifications' },
+    { to: '/payments', label: 'Payments' },
+    { to: '/profile', label: 'Profile' }
+  ],
+  librarian: [
+    { to: '/', label: 'Librarian Desk' },
+    { to: '/books', label: 'Catalog' },
+    { to: '/borrowed', label: 'Issue & Return' },
+    { to: '/reservations', label: 'Reservations' },
+    { to: '/payments', label: 'Fines' },
+    { to: '/profile', label: 'Profile' }
+  ],
+  admin: [
+    { to: '/', label: 'Admin Dashboard' },
+    { to: '/books', label: 'Catalog' },
+    { to: '/admin', label: 'Admin Panel' },
+    { to: '/admin/reviews', label: 'Review Queue' },
+    { to: '/payments', label: 'Payments' },
+    { to: '/profile', label: 'Profile' }
+  ]
+};
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
-  const isMember = user?.role === 'user';
-  const visibleLinks = isMember ? [...commonLinks, ...memberLinks] : staffListLinks;
+  const visibleLinks = user ? roleLinks[user.role] || roleLinks.user : [];
 
   return (
     <div className="min-h-screen">

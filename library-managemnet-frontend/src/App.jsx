@@ -30,8 +30,8 @@ export default function App() {
         <Route path="/notifications" element={<ProtectedRoute roles={['user']}><NotificationsPage /></ProtectedRoute>} />
         <Route path="/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute roles={['librarian', 'admin']}><AdminPage /></ProtectedRoute>} />
-        <Route path="/admin/reviews" element={<ProtectedRoute roles={['librarian', 'admin']}><AdminReviewsPage /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPage /></ProtectedRoute>} />
+        <Route path="/admin/reviews" element={<ProtectedRoute roles={['admin']}><AdminReviewsPage /></ProtectedRoute>} />
       </Routes>
     </Layout>
   );

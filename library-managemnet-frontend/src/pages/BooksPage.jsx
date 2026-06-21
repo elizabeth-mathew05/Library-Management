@@ -17,6 +17,7 @@ const initialBookForm = {
 export default function BooksPage() {
   const { user } = useAuth();
   const isStaff = user?.role === 'admin' || user?.role === 'librarian';
+  const isAdmin = user?.role === 'admin';
 
   const [books, setBooks] = useState([]);
   const [reviewableBookIds, setReviewableBookIds] = useState([]);
@@ -110,6 +111,11 @@ export default function BooksPage() {
   };
 
   const handleDeleteBook = async (book) => {
+    if (!isAdmin) {
+      setMessage('Only admins can delete books');
+      return;
+    }
+
     const confirmed = window.confirm(`Delete "${book.title}"?`);
 
     if (!confirmed) {
@@ -194,7 +200,7 @@ export default function BooksPage() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl text-slate-950">Inventory Management</h2>
-              <p className="text-sm text-slate-600">Add, update, and remove books.</p>
+              <p className="text-sm text-slate-600">Add and update books. Delete is restricted to admins.</p>
             </div>
             <button
               onClick={() => {
@@ -289,6 +295,7 @@ export default function BooksPage() {
             onReserve={handleReserve}
             onEdit={handleEditBook}
             onDelete={handleDeleteBook}
+            canDelete={isAdmin}
           />
         ))}
       </section>
