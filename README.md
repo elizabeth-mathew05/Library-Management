@@ -8,6 +8,29 @@ The project is split into a frontend and backend workspace. The frontend is a Vi
 
 The frontend also ships a redirect rule that forwards `/api/*` requests to the deployed backend at `https://library-management-15.onrender.com`.
 
+## Brief User Functionalities
+
+- **Standalone User**
+	- Register/login and browse available books.
+	- Borrow/return books and view borrowing activity.
+	- Access personal profile/account details.
+- **Librarian**
+	- Manage issuing and returning workflows.
+	- Track requests and maintain book availability.
+	- Support daily circulation operations.
+- **Admin**
+	- Manage users, books, and role-based operations.
+	- Oversee core library system administration.
+	- Create/manage users and assign roles.
+	- Manage global catalog and policy-level settings.
+	- Supervise overall system activity and access control.
+
+## Brief Directories
+
+- `library-managemnet-frontend/` - Frontend client (React + Vite).
+- `library-managemnet-backend/` - Backend API and core business logic.
+- `library-managemnet-frontend/public/_redirects` - Redirect config for forwarding `/api/*` requests.
+
 ## Project Structure
 
 - `library-managemnet-frontend` - React frontend built with Vite.
