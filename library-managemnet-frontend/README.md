@@ -6,7 +6,7 @@ A full-stack library management application for browsing books, managing reserva
 
 The project is split into a frontend and backend workspace. The frontend is a Vite + React app, and the root package scripts are wired to run the frontend and backend separately.
 
-The frontend also ships a redirect rule that forwards `/api/*` requests to the deployed backend at `https://library-management-15.onrender.com`.
+The frontend also ships a redirect rule that forwards `/api/*` requests to the deployed backend at `https://library-management-1-ifcc.onrender.com`.
 
 ## Brief User Functionalities
 
@@ -58,7 +58,7 @@ The frontend uses:
 
 ## Backend
 
-The backend is responsible for the API used by the frontend. The deployed API base currently points to `https://library-management-15.onrender.com/api`.
+The backend is responsible for the API used by the frontend. The deployed API base currently points to `https://library-management-1-ifcc.onrender.com/api`.
 
 ## Demo Credentials
 
