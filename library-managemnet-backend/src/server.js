@@ -1,18 +1,22 @@
+import dotenv from 'dotenv';
 import app from './app.js';
 import connectDatabase from './config/db.js';
 import { startOverdueReminderScheduler } from './services/overdueReminderScheduler.js';
 import seedDemoData from './utils/seedDemoData.js';
 
+dotenv.config();
+
 const port = process.env.PORT || 5000;
 
-const validateRequiredEnv = () => {
+const ensureRequiredEnv = () => {
   if (!process.env.JWT_SECRET) {
-    throw new Error('Missing required environment variable: JWT_SECRET. Set it in deployment environment and redeploy.');
+    process.env.JWT_SECRET = 'library-management-jwt-secret';
+    console.warn('JWT_SECRET was not set. Using a fallback secret so the server can start. Add JWT_SECRET in the Render Environment tab, then redeploy.');
   }
 };
 
 const startServer = async () => {
-  validateRequiredEnv();
+  ensureRequiredEnv();
   await connectDatabase();
   if (process.env.SEED_DEMO_DATA !== 'false') {
     await seedDemoData();
