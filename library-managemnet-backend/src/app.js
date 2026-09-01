@@ -36,6 +36,7 @@ const allowedOrigins = new Set([
   ...parseOrigins(process.env.FRONTEND_URL),
   'https://library-managemnet-elz.netlify.app',
   'https://lib-mangmnt-elz.netlify.app',
+  'https://lib-manag-elz.netlify.app',
   'http://localhost:5173'
 ]);
 

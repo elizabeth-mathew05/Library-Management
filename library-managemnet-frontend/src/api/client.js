@@ -1,23 +1,24 @@
 import axios from 'axios';
 
 const resolveApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
   if (import.meta.env.DEV) {
-    if (import.meta.env.VITE_API_BASE_URL) {
-      return import.meta.env.VITE_API_BASE_URL;
-    }
-
-    if (import.meta.env.VITE_API_URL) {
-      return import.meta.env.VITE_API_URL;
-    }
-
     return 'http://localhost:5000/api';
   }
 
-  return '/api';
+  return 'https://library-management-1-ifcc.onrender.com/api';
 };
 
 const api = axios.create({
-  baseURL: resolveApiBaseUrl()
+  baseURL: resolveApiBaseUrl(),
+  timeout: 60000
 });
 
 api.interceptors.request.use((config) => {
