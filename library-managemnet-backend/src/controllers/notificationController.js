@@ -10,7 +10,24 @@ const getNotifications = asyncHandler(async (req, res) => {
 });
 
 const createAnnouncement = asyncHandler(async (req, res) => {
-  const { title, message } = req.body;
+  const title = String(req.body.title || '').trim();
+  const message = String(req.body.message || '').trim();
+
+  if (!title) {
+    res.status(400);
+    throw new Error('Announcement title is required');
+  }
+
+  if (title.length > 120) {
+    res.status(400);
+    throw new Error('Announcement title must be 120 characters or fewer');
+  }
+
+  if (!message) {
+    res.status(400);
+    throw new Error('Announcement message is required');
+  }
+
   const notification = await Notification.create({
     title,
     message,

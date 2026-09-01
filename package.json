@@ -7,6 +7,7 @@
     "start:backend": "npm run start --prefix library-managemnet-backend",
     "start:frontend": "npm run start --prefix library-managemnet-frontend",
     "dev:backend": "npm run dev --prefix library-managemnet-backend",
-    "dev:frontend": "npm run dev --prefix library-managemnet-frontend"
+    "dev:frontend": "npm run dev --prefix library-managemnet-frontend",
+    "seed": "npm run seed --prefix library-managemnet-backend"
   }
 }

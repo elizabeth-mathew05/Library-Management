@@ -11,6 +11,7 @@ import PaymentsPage from './pages/PaymentsPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
 import AdminReviewsPage from './pages/AdminReviewsPage.jsx';
+import ReportsPage from './pages/ReportsPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
@@ -27,9 +28,10 @@ export default function App() {
         <Route path="/books/:id" element={<ProtectedRoute><BookDetailsPage /></ProtectedRoute>} />
         <Route path="/borrowed" element={<ProtectedRoute><BorrowedBooksPage /></ProtectedRoute>} />
         <Route path="/reservations" element={<ProtectedRoute><ReservationsPage /></ProtectedRoute>} />
-        <Route path="/notifications" element={<ProtectedRoute roles={['user']}><NotificationsPage /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
         <Route path="/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute roles={['admin', 'librarian']}><ReportsPage /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPage /></ProtectedRoute>} />
         <Route path="/admin/reviews" element={<ProtectedRoute roles={['admin']}><AdminReviewsPage /></ProtectedRoute>} />
       </Routes>

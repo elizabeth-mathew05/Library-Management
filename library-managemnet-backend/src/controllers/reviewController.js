@@ -1,4 +1,5 @@
 import Review from '../models/Review.js';
+import Borrow from '../models/Borrow.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import { syncAverageRating } from './bookController.js';
 
@@ -46,7 +47,7 @@ const getAllReviews = asyncHandler(async (req, res) => {
 });
 
 const getReviewsForBook = asyncHandler(async (req, res) => {
-  const reviews = await Review.find({ book: req.params.bookId })
+  const reviews = await Review.find({ book: req.params.bookId, moderated: { $ne: true } })
     .populate('user', 'name role')
     .sort({ createdAt: -1 });
 
@@ -56,6 +57,17 @@ const getReviewsForBook = asyncHandler(async (req, res) => {
 const createReview = asyncHandler(async (req, res) => {
   const { bookId } = req.params;
   const { rating, comment } = req.body;
+
+  const eligibleBorrow = await Borrow.findOne({
+    user: req.user._id,
+    book: bookId,
+    $or: [{ status: 'returned' }, { returnedAt: { $ne: null } }]
+  });
+
+  if (!eligibleBorrow) {
+    res.status(403);
+    throw new Error('You can only review a book after you have borrowed and returned it.');
+  }
 
   const existingReview = await Review.findOne({ user: req.user._id, book: bookId });
 

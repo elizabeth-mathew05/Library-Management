@@ -99,6 +99,12 @@ const borrowBook = asyncHandler(async (req, res) => {
     throw new Error(`Borrowing limit reached (${maxBorrowLimit})`);
   }
 
+  const readyReservation = await Reservation.findOne({ book: bookId, status: 'ready' }).sort({ createdAt: 1 });
+  if (readyReservation && readyReservation.user.toString() !== borrowerId.toString()) {
+    res.status(400);
+    throw new Error('This copy is held for the member next in the reservation queue.');
+  }
+
   const borrowedAt = new Date();
   const dueDate = new Date(borrowedAt);
   dueDate.setDate(dueDate.getDate() + defaultBorrowDays);
@@ -109,6 +115,11 @@ const borrowBook = asyncHandler(async (req, res) => {
     borrowedAt,
     dueDate
   });
+
+  if (readyReservation && readyReservation.user.toString() === borrowerId.toString()) {
+    readyReservation.status = 'fulfilled';
+    await readyReservation.save();
+  }
 
   book.availableCopies -= 1;
   book.status = getBookStatus(book.availableCopies, book.totalCopies);

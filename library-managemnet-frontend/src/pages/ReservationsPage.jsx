@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
+import StatusMessage from '../components/StatusMessage.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import { getApiErrorMessage } from '../utils/validation.js';
 
-const CANCELABLE_STATUSES = new Set(['pending', 'ready']);
+const CANCELABLE_STATUSES = new Set(['pending', 'queued', 'ready']);
 
 export default function ReservationsPage() {
   const { user } = useAuth();
   const isMember = user?.role === 'user';
   const [reservations, setReservations] = useState([]);
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('info');
   const [processingId, setProcessingId] = useState(null);
 
   const loadReservations = async () => {
@@ -31,9 +34,11 @@ export default function ReservationsPage() {
     try {
       await api.patch(`/reservations/${reservationId}/cancel`);
       setMessage('Reservation cancelled');
+      setMessageType('success');
       await loadReservations();
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to cancel reservation');
+      setMessage(getApiErrorMessage(error, 'Unable to cancel reservation'));
+      setMessageType('error');
     } finally {
       setProcessingId(null);
     }
@@ -56,14 +61,10 @@ export default function ReservationsPage() {
     <section className="space-y-6">
       <div className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
         <h1 className="font-display text-4xl text-slate-950">Reservations</h1>
-        <p className="mt-2 text-slate-600">See queued and ready reservations for high-demand books.</p>
+        <p className="mt-2 text-slate-600">See queued reservations for books that currently have no copies to borrow.</p>
       </div>
 
-      {message && (
-        <div className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-800">
-          {message}
-        </div>
-      )}
+      <StatusMessage type={messageType}>{message}</StatusMessage>
 
       <div className="grid gap-4 md:grid-cols-2">
         {reservations.map((reservation) => {

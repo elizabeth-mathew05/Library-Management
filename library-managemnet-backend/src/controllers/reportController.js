@@ -13,7 +13,12 @@ const getDashboardReport = asyncHandler(async (req, res) => {
     overdueBooks,
     reservations,
     payments,
-    popularBooks
+    popularBooks,
+    inventoryByGenre,
+    inventoryByStatus,
+    overdueList,
+    userActivity,
+    recentBorrows
   ] = await Promise.all([
     Book.countDocuments(),
     User.countDocuments(),
@@ -34,8 +39,38 @@ const getDashboardReport = asyncHandler(async (req, res) => {
         }
       },
       { $unwind: '$book' },
-      { $project: { title: '$book.title', borrowCount: 1 } }
-    ])
+      { $project: { title: '$book.title', author: '$book.author', borrowCount: 1 } }
+    ]),
+    Book.aggregate([
+      { $group: { _id: '$genre', count: { $sum: 1 }, available: { $sum: '$availableCopies' } } },
+      { $sort: { count: -1 } }
+    ]),
+    Book.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
+    Borrow.find({ returnedAt: null, dueDate: { $lt: new Date() } })
+      .populate('user', 'name email')
+      .populate('book', 'title author isbn')
+      .sort({ dueDate: 1 })
+      .limit(15),
+    Borrow.aggregate([
+      { $group: { _id: '$user', borrowCount: { $sum: 1 }, overdueCount: { $sum: { $cond: [{ $and: [{ $eq: ['$returnedAt', null] }, { $lt: ['$dueDate', new Date()] }] }, 1, 0] } } } },
+      { $sort: { borrowCount: -1 } },
+      { $limit: 8 },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: '$user' },
+      { $project: { name: '$user.name', email: '$user.email', role: '$user.role', borrowCount: 1, overdueCount: 1 } }
+    ]),
+    Borrow.find()
+      .populate('user', 'name email')
+      .populate('book', 'title')
+      .sort({ createdAt: -1 })
+      .limit(10)
   ]);
 
   res.json({
@@ -45,7 +80,12 @@ const getDashboardReport = asyncHandler(async (req, res) => {
     overdueBooks,
     activeReservations: reservations,
     revenue: payments[0]?.revenue || 0,
-    popularBooks
+    popularBooks,
+    inventoryByGenre,
+    inventoryByStatus,
+    overdueList,
+    userActivity,
+    recentBorrows
   });
 });
 

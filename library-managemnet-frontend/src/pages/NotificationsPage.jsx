@@ -46,6 +46,8 @@ export default function NotificationsPage() {
         return 'bg-teal-50 border-teal-200 text-teal-900';
       case 'payment':
         return 'bg-amber-50 border-amber-200 text-amber-900';
+      case 'announcement':
+        return 'bg-indigo-50 border-indigo-200 text-indigo-900';
       default:
         return 'bg-slate-50 border-slate-200 text-slate-900';
     }
@@ -59,6 +61,8 @@ export default function NotificationsPage() {
         return '📚';
       case 'payment':
         return '💳';
+      case 'announcement':
+        return '📢';
       default:
         return 'ℹ️';
     }
@@ -93,7 +97,7 @@ export default function NotificationsPage() {
       )}
 
       <div className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
-        <div className="flex gap-2 mb-6">
+        <div className="mb-6 flex flex-wrap items-center gap-2">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
@@ -133,6 +137,16 @@ export default function NotificationsPage() {
             }`}
           >
             Payments
+          </button>
+          <button
+            onClick={() => setFilter('announcement')}
+            className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+              filter === 'announcement'
+                ? 'bg-indigo-600 text-white'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            Announcements
           </button>
         </div>
 

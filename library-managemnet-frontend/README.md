@@ -11,19 +11,19 @@ The frontend also ships a redirect rule that forwards `/api/*` requests to the d
 ## Brief User Functionalities
 
 - **Standalone User**
-	- Register/login and browse available books.
-	- Borrow/return books and view borrowing activity.
-	- Access personal profile/account details.
+  - Register/login and browse available books.
+  - Borrow/return books and view borrowing activity.
+  - Access personal profile/account details.
 - **Librarian**
-	- Manage issuing and returning workflows.
-	- Track requests and maintain book availability.
-	- Support daily circulation operations.
+  - Manage issuing and returning workflows.
+  - Track requests and maintain book availability.
+  - Support daily circulation operations.
 - **Admin**
-	- Manage users, books, and role-based operations.
-	- Oversee core library system administration.
-	- Create/manage users and assign roles.
-	- Manage global catalog and policy-level settings.
-	- Supervise overall system activity and access control.
+  - Manage users, books, and role-based operations.
+  - Oversee core library system administration.
+  - Create/manage users and assign roles.
+  - Manage global catalog and policy-level settings.
+  - Supervise overall system activity and access control.
 
 ## Brief Directories
 
@@ -62,14 +62,14 @@ The backend is responsible for the API used by the frontend. The deployed API ba
 
 ## Demo Credentials
 
-# User Credentials
+These accounts are shown on the login page and are seeded by the backend on startup.
 
 ## Admin
 - Email: admin@gmail.com
 - Password: admin123
 
 ## Standalone User
-- Email: user1@gamil.com
+- Email: user1@gmail.com
 - Password: user1@123
 
 ## Librarian
@@ -79,4 +79,5 @@ The backend is responsible for the API used by the frontend. The deployed API ba
 ## Notes
 
 - The frontend redirect file routes `/api/*` to the deployed backend.
+- Sign in as the demo user to test overdue returns, late-fee payment, and reservations on unavailable books.
 - If you add or change seeded accounts, update this README so demo access stays in sync with the application.

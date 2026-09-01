@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
+import StatusMessage from '../components/StatusMessage.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import { getApiErrorMessage } from '../utils/validation.js';
 
 export default function ProfilePage() {
   const { refreshProfile } = useAuth();
   const [profile, setProfile] = useState(null);
   const [form, setForm] = useState({ name: '', phone: '', address: '' });
-  const [password, setPassword] = useState({ currentPassword: '', newPassword: '' });
+  const [password, setPassword] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('info');
+  const [profileErrors, setProfileErrors] = useState({});
+  const [passwordErrors, setPasswordErrors] = useState({});
 
   const loadProfile = async () => {
     const { data } = await api.get('/auth/me');
@@ -25,17 +30,67 @@ export default function ProfilePage() {
 
   const saveProfile = async (event) => {
     event.preventDefault();
-    await api.put('/auth/profile', form);
-    await refreshProfile();
-    await loadProfile();
-    setMessage('Profile updated');
+    const nextErrors = {};
+    const name = form.name.trim();
+
+    if (!name || name.length < 2) {
+      nextErrors.name = 'Full name must be at least 2 characters.';
+    }
+
+    setProfileErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      setMessage('Please correct your profile details.');
+      setMessageType('error');
+      return;
+    }
+
+    try {
+      await api.put('/auth/profile', { ...form, name });
+      await refreshProfile();
+      await loadProfile();
+      setMessage('Profile updated');
+      setMessageType('success');
+    } catch (error) {
+      setMessage(getApiErrorMessage(error, 'Unable to update profile'));
+      setMessageType('error');
+    }
   };
 
   const updatePassword = async (event) => {
     event.preventDefault();
-    await api.put('/auth/password', password);
-    setPassword({ currentPassword: '', newPassword: '' });
-    setMessage('Password changed');
+    const nextErrors = {};
+
+    if (!password.currentPassword) {
+      nextErrors.currentPassword = 'Current password is required.';
+    }
+
+    if (!password.newPassword || password.newPassword.length < 6) {
+      nextErrors.newPassword = 'New password must be at least 6 characters.';
+    }
+
+    if (password.confirmPassword !== password.newPassword) {
+      nextErrors.confirmPassword = 'Passwords do not match.';
+    }
+
+    setPasswordErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      setMessage('Please correct the password form.');
+      setMessageType('error');
+      return;
+    }
+
+    try {
+      await api.put('/auth/password', {
+        currentPassword: password.currentPassword,
+        newPassword: password.newPassword
+      });
+      setPassword({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setMessage('Password changed');
+      setMessageType('success');
+    } catch (error) {
+      setMessage(getApiErrorMessage(error, 'Unable to change password'));
+      setMessageType('error');
+    }
   };
 
   if (!profile) {
@@ -47,9 +102,14 @@ export default function ProfilePage() {
       <section className="rounded-[2rem] border border-white/60 bg-white/90 p-8 shadow-xl shadow-slate-200/60">
         <h1 className="font-display text-4xl text-slate-950">My profile</h1>
         <p className="mt-2 text-slate-600">Manage your account details and review activity snapshots.</p>
-        {message && <p className="mt-4 text-sm text-teal-700">{message}</p>}
-        <form onSubmit={saveProfile} className="mt-8 space-y-4">
-          <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Name" />
+        <div className="mt-4">
+          <StatusMessage type={messageType}>{message}</StatusMessage>
+        </div>
+        <form onSubmit={saveProfile} className="mt-8 space-y-4" noValidate>
+          <div>
+            <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Name" />
+            {profileErrors.name && <p className="mt-1 text-sm text-rose-600">{profileErrors.name}</p>}
+          </div>
           <input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} placeholder="Phone" />
           <textarea rows="4" value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} placeholder="Address" />
           <button type="submit" className="rounded-2xl bg-slate-950 px-4 py-3 font-semibold text-white">
@@ -57,10 +117,20 @@ export default function ProfilePage() {
           </button>
         </form>
 
-        <form onSubmit={updatePassword} className="mt-10 space-y-4 rounded-3xl bg-slate-100 p-5">
+        <form onSubmit={updatePassword} className="mt-10 space-y-4 rounded-3xl bg-slate-100 p-5" noValidate>
           <h2 className="text-2xl font-semibold text-slate-950">Change password</h2>
-          <input type="password" value={password.currentPassword} onChange={(event) => setPassword({ ...password, currentPassword: event.target.value })} placeholder="Current password" />
-          <input type="password" value={password.newPassword} onChange={(event) => setPassword({ ...password, newPassword: event.target.value })} placeholder="New password" />
+          <div>
+            <input type="password" value={password.currentPassword} onChange={(event) => setPassword({ ...password, currentPassword: event.target.value })} placeholder="Current password" />
+            {passwordErrors.currentPassword && <p className="mt-1 text-sm text-rose-600">{passwordErrors.currentPassword}</p>}
+          </div>
+          <div>
+            <input type="password" value={password.newPassword} onChange={(event) => setPassword({ ...password, newPassword: event.target.value })} placeholder="New password" />
+            {passwordErrors.newPassword && <p className="mt-1 text-sm text-rose-600">{passwordErrors.newPassword}</p>}
+          </div>
+          <div>
+            <input type="password" value={password.confirmPassword} onChange={(event) => setPassword({ ...password, confirmPassword: event.target.value })} placeholder="Confirm new password" />
+            {passwordErrors.confirmPassword && <p className="mt-1 text-sm text-rose-600">{passwordErrors.confirmPassword}</p>}
+          </div>
           <button type="submit" className="rounded-2xl bg-teal-600 px-4 py-3 font-semibold text-white">
             Update password
           </button>
@@ -71,16 +141,43 @@ export default function ProfilePage() {
         <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
           <h2 className="font-display text-3xl text-slate-950">Borrowing history</h2>
           <div className="mt-4 space-y-3">
-            {profile.borrowingHistory.map((item) => (
+            {profile.borrowingHistory.length ? profile.borrowingHistory.map((item) => (
+              <div key={item._id} className="rounded-2xl border border-slate-200 p-4">
+                <p className="font-semibold text-slate-900">{item.book?.title}</p>
+                <p className="text-sm text-slate-600">Status: {item.status}</p>
+                {item.dueDate && <p className="text-xs text-slate-500">Due {new Date(item.dueDate).toLocaleDateString()}</p>}
+              </div>
+            )) : <p className="text-sm text-slate-500">No borrowing history yet.</p>}
+          </div>
+        </article>
+        <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+          <h2 className="font-display text-3xl text-slate-950">Reserved books</h2>
+          <div className="mt-4 space-y-3">
+            {(profile.reservations || []).length ? profile.reservations.map((item) => (
               <div key={item._id} className="rounded-2xl border border-slate-200 p-4">
                 <p className="font-semibold text-slate-900">{item.book?.title}</p>
                 <p className="text-sm text-slate-600">Status: {item.status}</p>
               </div>
-            ))}
+            )) : <p className="text-sm text-slate-500">No active reservations.</p>}
+          </div>
+        </article>
+        <article className="rounded-[2rem] border border-rose-100 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+          <h2 className="font-display text-3xl text-slate-950">Overdue notifications</h2>
+          <div className="mt-4 space-y-3">
+            {(profile.notifications || []).filter((item) => item.type === 'overdue').length ? (
+              profile.notifications.filter((item) => item.type === 'overdue').map((item) => (
+                <div key={item._id} className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
+                  <p className="font-semibold text-rose-900">{item.title}</p>
+                  <p className="text-sm text-rose-700">{item.message}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500">No overdue reminders.</p>
+            )}
           </div>
         </article>
         <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
-          <h2 className="font-display text-3xl text-slate-950">Notifications</h2>
+          <h2 className="font-display text-3xl text-slate-950">All notifications</h2>
           <div className="mt-4 space-y-3">
             {profile.notifications.map((item) => (
               <div key={item._id} className="rounded-2xl bg-slate-100 p-4">

@@ -21,6 +21,11 @@ const createReservation = asyncHandler(async (req, res) => {
     throw new Error('Book not found');
   }
 
+  if (Number(book.availableCopies) >= Number(book.totalCopies)) {
+    res.status(400);
+    throw new Error('This book is fully available. Borrow it instead of reserving.');
+  }
+
   const existingReservation = await Reservation.findOne({
     user: req.user._id,
     book: bookId,
@@ -37,7 +42,7 @@ const createReservation = asyncHandler(async (req, res) => {
     user: req.user._id,
     book: bookId,
     queuePosition,
-    status: book.availableCopies > 0 ? 'ready' : 'queued'
+    status: 'queued'
   });
 
   res.status(201).json(await reservation.populate('book', 'title author isbn status'));

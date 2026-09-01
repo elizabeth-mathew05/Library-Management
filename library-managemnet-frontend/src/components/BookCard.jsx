@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import { canBorrowBook, canReserveBook } from '../utils/bookAvailability.js';
 
 export default function BookCard({ book, isStaff = false, canReview = false, onBorrow, onReserve, onEdit, onDelete, canDelete = true }) {
-  const canBorrow = Number(book.availableCopies) > 0;
+  const canBorrow = canBorrowBook(book);
+  const canReserve = canReserveBook(book);
   const showMemberActions = !isStaff;
 
   return (
@@ -25,39 +27,42 @@ export default function BookCard({ book, isStaff = false, canReview = false, onB
         <p>Rating: {book.averageRating?.toFixed?.(1) || '0.0'}</p>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link to={`/books/${book._id}?mode=view`} className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white">
+      <div className="mt-auto flex flex-wrap items-center gap-3 pt-6">
+        <Link to={`/books/${book._id}?mode=view`} className="inline-flex h-10 items-center rounded-full bg-slate-950 px-4 text-sm font-medium text-white">
           View Reviews
         </Link>
 
         {canReview && (
-          <Link to={`/books/${book._id}?mode=add`} className="rounded-full border border-teal-300 bg-teal-50 px-4 py-2 text-sm font-medium text-teal-800">
+          <Link to={`/books/${book._id}?mode=add`} className="inline-flex h-10 items-center rounded-full border border-teal-300 bg-teal-50 px-4 text-sm font-medium text-teal-800">
             Add Review
           </Link>
         )}
 
-        {showMemberActions && (
-          <>
-            <button
-              onClick={() => onBorrow?.(book)}
-              disabled={!canBorrow}
-              className={`rounded-full px-4 py-2 text-sm font-medium text-white ${canBorrow ? 'bg-teal-600' : 'cursor-not-allowed bg-slate-400'}`}
-            >
-              Borrow
-            </button>
-            <button onClick={() => onReserve?.(book)} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700">
-              Reserve
-            </button>
-          </>
+        {showMemberActions && canBorrow && (
+          <button
+            onClick={() => onBorrow?.(book)}
+            className="inline-flex h-10 items-center rounded-full bg-teal-600 px-4 text-sm font-medium text-white"
+          >
+            Borrow
+          </button>
+        )}
+
+        {showMemberActions && canReserve && (
+          <button
+            onClick={() => onReserve?.(book)}
+            className="inline-flex h-10 items-center rounded-full border border-slate-300 px-4 text-sm font-medium text-slate-700"
+          >
+            Reserve
+          </button>
         )}
 
         {isStaff && (
           <>
-            <button onClick={() => onEdit?.(book)} className="rounded-full bg-amber-400 px-4 py-2 text-sm font-medium text-slate-950">
+            <button onClick={() => onEdit?.(book)} className="inline-flex h-10 items-center rounded-full bg-amber-400 px-4 text-sm font-medium text-slate-950">
               Edit
             </button>
             {canDelete && (
-              <button onClick={() => onDelete?.(book)} className="rounded-full bg-rose-600 px-4 py-2 text-sm font-medium text-white">
+              <button onClick={() => onDelete?.(book)} className="inline-flex h-10 items-center rounded-full bg-rose-600 px-4 text-sm font-medium text-white">
                 Delete
               </button>
             )}

@@ -25,7 +25,9 @@ const bookSchema = new mongoose.Schema(
     },
     publicationYear: {
       type: Number,
-      required: true
+      required: true,
+      min: [1000, 'Publication year must be at least 1000'],
+      max: [new Date().getFullYear(), `Publication year cannot be later than ${new Date().getFullYear()}`]
     },
     description: {
       type: String,

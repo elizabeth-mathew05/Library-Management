@@ -28,6 +28,10 @@ const borrowSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    lateFeePaid: {
+      type: Boolean,
+      default: false
+    },
     overdueReminderSentAt: { type: Date, default: null },
     status: {
       type: String,

@@ -24,7 +24,7 @@ const syncAverageRating = async (bookId) => {
 };
 
 const getBooks = asyncHandler(async (req, res) => {
-  const { search = '', genre, status } = req.query;
+  const { search = '', genre, status, year } = req.query;
   const filters = {};
 
   if (search) {
@@ -44,14 +44,24 @@ const getBooks = asyncHandler(async (req, res) => {
     filters.status = status;
   }
 
+  if (year) {
+    filters.publicationYear = Number(year);
+  }
+
   const books = await Book.find(filters).sort({ createdAt: -1 });
-  res.json(books);
+  const normalizedBooks = books.map((book) => {
+    const nextStatus = getBookStatus(book.availableCopies, book.totalCopies);
+    const payload = book.toObject();
+    payload.status = nextStatus;
+    return payload;
+  });
+  res.json(normalizedBooks);
 });
 
 const getBookById = asyncHandler(async (req, res) => {
   const [book, reviews] = await Promise.all([
     Book.findById(req.params.id),
-    Review.find({ book: req.params.id }).populate('user', 'name role').sort({ createdAt: -1 })
+    Review.find({ book: req.params.id, moderated: { $ne: true } }).populate('user', 'name role').sort({ createdAt: -1 })
   ]);
 
   if (!book) {
@@ -59,7 +69,9 @@ const getBookById = asyncHandler(async (req, res) => {
     throw new Error('Book not found');
   }
 
-  res.json({ book, reviews });
+  const payload = book.toObject();
+  payload.status = getBookStatus(book.availableCopies, book.totalCopies);
+  res.json({ book: payload, reviews });
 });
 
 const createBook = asyncHandler(async (req, res) => {

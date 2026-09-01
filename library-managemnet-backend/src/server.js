@@ -1,6 +1,7 @@
 import app from './app.js';
 import connectDatabase from './config/db.js';
 import { startOverdueReminderScheduler } from './services/overdueReminderScheduler.js';
+import seedDemoData from './utils/seedDemoData.js';
 
 const port = process.env.PORT || 5000;
 
@@ -13,6 +14,9 @@ const validateRequiredEnv = () => {
 const startServer = async () => {
   validateRequiredEnv();
   await connectDatabase();
+  if (process.env.SEED_DEMO_DATA !== 'false') {
+    await seedDemoData();
+  }
   startOverdueReminderScheduler();
   app.listen(port, () => {
     console.log(`Library backend listening on http://localhost:${port}`);

@@ -1,11 +1,13 @@
 import Stripe from 'stripe';
 
 const createStripeClient = () => {
-  if (!process.env.STRIPE_SECRET_KEY) {
+  const secretKey = process.env.STRIPE_SECRET_KEY || '';
+
+  if (!secretKey || /replace|changeme|your[-_]?key/i.test(secretKey)) {
     return null;
   }
 
-  return new Stripe(process.env.STRIPE_SECRET_KEY);
+  return new Stripe(secretKey);
 };
 
 const createPaymentIntent = async ({ amount, currency = 'usd', metadata = {} }) => {

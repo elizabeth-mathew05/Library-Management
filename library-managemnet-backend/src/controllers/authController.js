@@ -21,10 +21,7 @@ const ensureValidRequest = (req) => {
 const registerUser = asyncHandler(async (req, res) => {
   ensureValidRequest(req);
 
-  const { name, email, password, role } = req.body;
-  const normalizedRole = ['user', 'librarian', 'admin'].includes(String(role || '').trim().toLowerCase())
-    ? String(role).trim().toLowerCase()
-    : 'user';
+  const { name, email, password } = req.body;
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
@@ -32,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Email already exists');
   }
 
-  const user = await User.create({ name, email, password, role: normalizedRole });
+  const user = await User.create({ name, email, password, role: 'user' });
 
   res.status(201).json({
     token: generateToken(user._id),
@@ -85,8 +82,14 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 const updateProfile = asyncHandler(async (req, res) => {
   const { name, phone, address } = req.body;
   const user = await User.findById(req.user._id);
+  const trimmedName = String(name || '').trim();
 
-  user.name = name || user.name;
+  if (!trimmedName || trimmedName.length < 2) {
+    res.status(400);
+    throw new Error('Full name must be at least 2 characters');
+  }
+
+  user.name = trimmedName;
   user.phone = phone ?? user.phone;
   user.address = address ?? user.address;
 
@@ -98,6 +101,16 @@ const updateProfile = asyncHandler(async (req, res) => {
 const changePassword = asyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const user = await User.findById(req.user._id);
+
+  if (!currentPassword || !newPassword) {
+    res.status(400);
+    throw new Error('Current password and new password are required');
+  }
+
+  if (String(newPassword).length < 6) {
+    res.status(400);
+    throw new Error('New password must be at least 6 characters');
+  }
 
   if (!(await user.matchPassword(currentPassword))) {
     res.status(400);

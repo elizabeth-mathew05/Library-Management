@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import api from '../api/client.js';
+import StatusMessage from '../components/StatusMessage.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { canBorrowBook, canReserveBook } from '../utils/bookAvailability.js';
+import { getApiErrorMessage } from '../utils/validation.js';
 
 export default function BookDetailsPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [form, setForm] = useState({ rating: 5, comment: '' });
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('info');
+  const [canReview, setCanReview] = useState(false);
+  const isMember = user?.role === 'user';
 
-  const showReviewForm = searchParams.get('mode') !== 'view';
+  const showReviewForm = searchParams.get('mode') !== 'view' && canReview;
 
   const loadBook = async () => {
     const { data } = await api.get(`/books/${id}`);
@@ -20,22 +28,44 @@ export default function BookDetailsPage() {
 
   useEffect(() => {
     loadBook();
-  }, [id]);
+
+    if (!isMember) {
+      setCanReview(false);
+      return;
+    }
+
+    api.get('/borrows')
+      .then(({ data }) => {
+        const eligible = data.some((borrow) => (
+          String(borrow.book?._id) === String(id) && (borrow.status === 'returned' || borrow.returnedAt)
+        ));
+        setCanReview(eligible);
+      })
+      .catch(() => setCanReview(false));
+  }, [id, isMember]);
 
   const handleSubmitReview = async (event) => {
     event.preventDefault();
     setMessage('');
 
+    if (!form.comment.trim()) {
+      setMessage('Review comment is required.');
+      setMessageType('error');
+      return;
+    }
+
     try {
       await api.post(`/reviews/book/${id}`, {
         rating: Number(form.rating),
-        comment: form.comment
+        comment: form.comment.trim()
       });
       setForm({ rating: 5, comment: '' });
       setMessage('Review submitted successfully');
+      setMessageType('success');
       loadBook();
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to submit review');
+      setMessage(getApiErrorMessage(error, 'Unable to submit review'));
+      setMessageType('error');
     }
   };
 
@@ -58,13 +88,65 @@ export default function BookDetailsPage() {
         </div>
 
         <p className="mt-6 text-slate-700">{book.description || 'No description added yet.'}</p>
+
+        {isMember && (
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            {canBorrowBook(book) && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await api.post('/borrows', { bookId: book._id, userId: user?.id });
+                    setMessage(`Borrowed ${book.title}`);
+                    setMessageType('success');
+                    loadBook();
+                  } catch (error) {
+                    setMessage(getApiErrorMessage(error, 'Unable to borrow book'));
+                    setMessageType('error');
+                  }
+                }}
+                className="inline-flex h-10 items-center rounded-full bg-teal-600 px-4 text-sm font-semibold text-white"
+              >
+                Borrow
+              </button>
+            )}
+            {canReserveBook(book) && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await api.post('/reservations', { bookId: book._id });
+                    setMessage(`Reserved ${book.title}`);
+                    setMessageType('success');
+                  } catch (error) {
+                    setMessage(getApiErrorMessage(error, 'Unable to reserve book'));
+                    setMessageType('error');
+                  }
+                }}
+                className="inline-flex h-10 items-center rounded-full border border-slate-300 px-4 text-sm font-semibold text-slate-700"
+              >
+                Reserve
+              </button>
+            )}
+            <p className="text-sm text-slate-500">
+              {canReserveBook(book)
+                ? canBorrowBook(book)
+                  ? 'This title is in high demand. You can borrow a remaining copy or reserve a place in the queue.'
+                  : 'All copies are checked out. You can reserve this title.'
+                : 'All copies are on the shelf, so this title can be borrowed.'}
+            </p>
+          </div>
+        )}
+        <div className="mt-4">
+          <StatusMessage type={messageType}>{message}</StatusMessage>
+        </div>
       </section>
 
       <section className="space-y-6">
         {showReviewForm && (
           <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
             <h2 className="font-display text-3xl text-slate-950">Write a review</h2>
-            <p className="mt-2 text-sm text-slate-600">All logged-in users can submit a review for this book.</p>
+            <p className="mt-2 text-sm text-slate-600">You can review this book because you have borrowed and returned it.</p>
             <form onSubmit={handleSubmitReview} className="mt-4 space-y-4">
               <label className="block space-y-2 text-sm font-medium text-slate-700">
                 <span>Review</span>
@@ -93,7 +175,9 @@ export default function BookDetailsPage() {
                 Submit Review
               </button>
             </form>
-            {message && <p className="mt-4 text-sm text-teal-700">{message}</p>}
+            <div className="mt-4">
+              <StatusMessage type={messageType}>{message}</StatusMessage>
+            </div>
           </article>
         )}
 
