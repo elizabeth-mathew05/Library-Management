@@ -8,10 +8,5 @@ export function canBorrowBook(book) {
 }
 
 export function canReserveBook(book) {
-  const available = getAvailableCopies(book);
-  const total = Number(book?.totalCopies);
-  const safeTotal = Number.isFinite(total) && total > 0 ? total : available;
-
-  // Reserve checked-out titles and high-demand titles that are already partly on loan.
-  return available < safeTotal;
+  return getAvailableCopies(book) <= 0;
 }

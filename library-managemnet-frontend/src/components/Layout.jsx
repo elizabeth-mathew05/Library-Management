@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -34,53 +35,65 @@ const roleLinks = {
 };
 
 const navClassName = ({ isActive }) =>
-  `inline-flex h-10 items-center justify-center rounded-full px-4 text-sm font-medium ${
-    isActive ? 'bg-teal-500 text-white' : 'bg-white/10 text-slate-100 hover:bg-white/20'
+  `flex min-h-11 w-full items-center justify-center rounded-lg px-3 py-2 text-sm font-semibold sm:w-auto ${
+    isActive ? 'bg-teal-800 text-white' : 'bg-white text-slate-900 hover:bg-slate-100'
   }`;
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
   const visibleLinks = user ? roleLinks[user.role] || roleLinks.user : [];
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-white/40 bg-slate-950 text-white shadow-lg shadow-slate-900/10">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center justify-between gap-4">
-            <Link to="/" className="font-display text-2xl tracking-wide text-teal-300">
+    <div className="min-h-screen bg-slate-100">
+      <header className="bg-slate-900 text-white">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
+          <div className="flex items-center justify-between gap-3">
+            <Link to="/" className="shrink-0 font-display text-lg text-white sm:text-2xl">
               Library LMS
             </Link>
             <div className="flex items-center gap-2">
+              {user && (
+                <span className="hidden rounded-lg bg-teal-800 px-3 py-2 text-xs font-bold uppercase text-white md:inline-flex">
+                  {user.role}
+                </span>
+              )}
               {user ? (
-                <>
-                  <span className="inline-flex h-10 items-center rounded-full bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.14em] text-teal-200">
-                    {user.role}
-                  </span>
-                  <button onClick={logout} className="inline-flex h-10 items-center rounded-full border border-white/20 px-4 text-sm hover:bg-white/10">
-                    Logout
-                  </button>
-                </>
+                <button onClick={logout} className="inline-flex min-h-11 items-center rounded-lg bg-white px-3 text-sm font-semibold text-slate-900">
+                  Logout
+                </button>
               ) : (
                 <>
-                  <NavLink to="/login" className="inline-flex h-10 items-center rounded-full px-4 text-sm hover:bg-white/10">
+                  <NavLink to="/login" className="inline-flex min-h-11 items-center rounded-lg bg-white px-3 text-sm font-semibold text-slate-900">
                     Login
                   </NavLink>
-                  <NavLink to="/register" className="inline-flex h-10 items-center rounded-full bg-teal-500 px-4 text-sm">
+                  <NavLink to="/register" className="inline-flex min-h-11 items-center rounded-lg bg-teal-800 px-3 text-sm font-semibold text-white">
                     Register
                   </NavLink>
                 </>
+              )}
+              {user && (
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-white px-3 text-sm font-semibold text-white lg:hidden"
+                  onClick={() => setMenuOpen((open) => !open)}
+                  aria-expanded={menuOpen}
+                >
+                  {menuOpen ? 'Close' : 'Menu'}
+                </button>
               )}
             </div>
           </div>
 
           {user && (
-            <nav className="mt-4 flex flex-wrap items-center gap-2">
+            <nav className={`${menuOpen ? 'mt-3 grid grid-cols-1 gap-2' : 'hidden'} lg:mt-3 lg:flex lg:flex-wrap lg:gap-2`}>
               {visibleLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
                   end={link.to === '/' || link.to === '/admin'}
                   className={navClassName}
+                  onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
                 </NavLink>
@@ -89,7 +102,7 @@ export default function Layout({ children }) {
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">{children}</main>
     </div>
   );
 }

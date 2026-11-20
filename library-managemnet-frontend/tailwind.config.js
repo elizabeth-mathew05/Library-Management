@@ -3,17 +3,19 @@ export default {
   theme: {
     extend: {
       colors: {
+        ink: '#0f172a',
+        paper: '#f8fafc',
         brand: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          500: '#0f766e',
-          700: '#115e59',
+          50: '#f0fdfa',
+          100: '#ccfbf1',
+          700: '#0f766e',
+          800: '#115e59',
           900: '#134e4a'
         }
       },
       fontFamily: {
-        display: ['Georgia', 'serif'],
-        body: ['Segoe UI', 'sans-serif']
+        display: ['Georgia', 'Times New Roman', 'serif'],
+        body: ['Segoe UI', 'Tahoma', 'sans-serif']
       }
     }
   },

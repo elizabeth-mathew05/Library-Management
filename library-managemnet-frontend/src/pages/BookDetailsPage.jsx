@@ -70,15 +70,15 @@ export default function BookDetailsPage() {
   };
 
   if (!book) {
-    return <div className="text-slate-600">Loading book...</div>;
+    return <div className="text-slate-800">Loading book...</div>;
   }
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.3fr,1fr]">
-      <section className="rounded-[2rem] border border-white/60 bg-white/90 p-8 shadow-xl shadow-slate-200/60">
+      <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8">
         <p className="text-sm uppercase tracking-[0.3em] text-teal-700">{book.genre}</p>
-        <h1 className="mt-3 font-display text-5xl text-slate-950">{book.title}</h1>
-        <p className="mt-2 text-lg text-slate-600">by {book.author}</p>
+        <h1 className="page-title mt-3">{book.title}</h1>
+        <p className="page-copy mt-2 text-lg">by {book.author}</p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl bg-slate-100 p-4">ISBN: {book.isbn}</div>
@@ -105,7 +105,7 @@ export default function BookDetailsPage() {
                     setMessageType('error');
                   }
                 }}
-                className="inline-flex h-10 items-center rounded-full bg-teal-600 px-4 text-sm font-semibold text-white"
+                className="inline-flex h-10 items-center rounded-full bg-teal-800 px-4 text-sm font-semibold text-white"
               >
                 Borrow
               </button>
@@ -128,12 +128,10 @@ export default function BookDetailsPage() {
                 Reserve
               </button>
             )}
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-700">
               {canReserveBook(book)
-                ? canBorrowBook(book)
-                  ? 'This title is in high demand. You can borrow a remaining copy or reserve a place in the queue.'
-                  : 'All copies are checked out. You can reserve this title.'
-                : 'All copies are on the shelf, so this title can be borrowed.'}
+                ? 'No copies are available, so this title can be reserved.'
+                : 'Copies are available, so this title can be borrowed.'}
             </p>
           </div>
         )}
@@ -144,9 +142,9 @@ export default function BookDetailsPage() {
 
       <section className="space-y-6">
         {showReviewForm && (
-          <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+          <article className="rounded-[2rem] border border-slate-300 bg-white p-6 shadow-xl shadow-slate-200/60">
             <h2 className="font-display text-3xl text-slate-950">Write a review</h2>
-            <p className="mt-2 text-sm text-slate-600">You can review this book because you have borrowed and returned it.</p>
+            <p className="page-copy mt-2">You can review this book because you have borrowed and returned it.</p>
             <form onSubmit={handleSubmitReview} className="mt-4 space-y-4">
               <label className="block space-y-2 text-sm font-medium text-slate-700">
                 <span>Review</span>
@@ -171,7 +169,7 @@ export default function BookDetailsPage() {
                   ))}
                 </select>
               </label>
-              <button type="submit" className="inline-flex min-w-[180px] items-center justify-center rounded-2xl bg-teal-600 px-5 py-3 font-semibold text-white">
+              <button type="submit" className="inline-flex min-w-[180px] items-center justify-center rounded-2xl bg-teal-800 px-5 py-3 font-semibold text-white">
                 Submit Review
               </button>
             </form>
@@ -181,7 +179,7 @@ export default function BookDetailsPage() {
           </article>
         )}
 
-        <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+        <article className="rounded-[2rem] border border-slate-300 bg-white p-6 shadow-xl shadow-slate-200/60">
           <h2 className="font-display text-3xl text-slate-950">User Reviews (All Users)</h2>
           <div className="mt-4 space-y-4">
             {reviews.length ? (
@@ -189,16 +187,16 @@ export default function BookDetailsPage() {
                 <div key={review._id} className="rounded-2xl border border-slate-200 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <h3 className="font-semibold text-slate-900">{review.user?.name || 'Unknown user'}</h3>
-                    <span className="rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-700">{review.rating}/5</span>
+                    <span className="rounded-full bg-amber-200 px-3 py-1 text-sm font-semibold text-amber-950">{review.rating}/5</span>
                   </div>
-                  <p className="mt-2 text-sm text-slate-600">{review.comment}</p>
+                  <p className="mt-2 text-sm text-slate-800">{review.comment}</p>
                   {review.moderated && (
                     <p className="mt-2 text-xs uppercase tracking-[0.18em] text-amber-700">Moderated by admin</p>
                   )}
                 </div>
               ))
             ) : (
-              <p className="text-slate-500">No reviews yet for this book.</p>
+              <p className="text-slate-800">No reviews yet for this book.</p>
             )}
           </div>
         </article>

@@ -1,7 +1,7 @@
 const styles = {
-  success: 'border-teal-200 bg-teal-50 text-teal-800',
-  error: 'border-rose-200 bg-rose-50 text-rose-800',
-  info: 'border-slate-200 bg-slate-50 text-slate-700'
+  success: 'border-teal-900 bg-teal-50 text-teal-950',
+  error: 'border-rose-900 bg-rose-50 text-rose-950',
+  info: 'border-slate-700 bg-white text-slate-950'
 };
 
 export default function StatusMessage({ type = 'info', children }) {

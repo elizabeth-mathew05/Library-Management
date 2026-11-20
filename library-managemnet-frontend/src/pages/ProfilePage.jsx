@@ -94,14 +94,14 @@ export default function ProfilePage() {
   };
 
   if (!profile) {
-    return <div className="text-slate-600">Loading profile...</div>;
+    return <div className="text-slate-800">Loading profile...</div>;
   }
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.1fr,0.9fr]">
-      <section className="rounded-[2rem] border border-white/60 bg-white/90 p-8 shadow-xl shadow-slate-200/60">
-        <h1 className="font-display text-4xl text-slate-950">My profile</h1>
-        <p className="mt-2 text-slate-600">Manage your account details and review activity snapshots.</p>
+      <section className="rounded-[2rem] border border-slate-300 bg-white p-8 shadow-xl shadow-slate-200/60">
+        <h1 className="page-title">My profile</h1>
+        <p className="mt-2 text-slate-800">Manage your account details and review activity snapshots.</p>
         <div className="mt-4">
           <StatusMessage type={messageType}>{message}</StatusMessage>
         </div>
@@ -131,37 +131,37 @@ export default function ProfilePage() {
             <input type="password" value={password.confirmPassword} onChange={(event) => setPassword({ ...password, confirmPassword: event.target.value })} placeholder="Confirm new password" />
             {passwordErrors.confirmPassword && <p className="mt-1 text-sm text-rose-600">{passwordErrors.confirmPassword}</p>}
           </div>
-          <button type="submit" className="rounded-2xl bg-teal-600 px-4 py-3 font-semibold text-white">
+          <button type="submit" className="rounded-2xl bg-teal-800 px-4 py-3 font-semibold text-white">
             Update password
           </button>
         </form>
       </section>
 
       <section className="space-y-6">
-        <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+        <article className="rounded-[2rem] border border-slate-300 bg-white p-6 shadow-xl shadow-slate-200/60">
           <h2 className="font-display text-3xl text-slate-950">Borrowing history</h2>
           <div className="mt-4 space-y-3">
             {profile.borrowingHistory.length ? profile.borrowingHistory.map((item) => (
               <div key={item._id} className="rounded-2xl border border-slate-200 p-4">
                 <p className="font-semibold text-slate-900">{item.book?.title}</p>
-                <p className="text-sm text-slate-600">Status: {item.status}</p>
-                {item.dueDate && <p className="text-xs text-slate-500">Due {new Date(item.dueDate).toLocaleDateString()}</p>}
+                <p className="text-sm text-slate-800">Status: {item.status}</p>
+                {item.dueDate && <p className="text-xs text-slate-800">Due {new Date(item.dueDate).toLocaleDateString()}</p>}
               </div>
-            )) : <p className="text-sm text-slate-500">No borrowing history yet.</p>}
+            )) : <p className="text-sm text-slate-800">No borrowing history yet.</p>}
           </div>
         </article>
-        <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+        <article className="rounded-[2rem] border border-slate-300 bg-white p-6 shadow-xl shadow-slate-200/60">
           <h2 className="font-display text-3xl text-slate-950">Reserved books</h2>
           <div className="mt-4 space-y-3">
             {(profile.reservations || []).length ? profile.reservations.map((item) => (
               <div key={item._id} className="rounded-2xl border border-slate-200 p-4">
                 <p className="font-semibold text-slate-900">{item.book?.title}</p>
-                <p className="text-sm text-slate-600">Status: {item.status}</p>
+                <p className="text-sm text-slate-800">Status: {item.status}</p>
               </div>
-            )) : <p className="text-sm text-slate-500">No active reservations.</p>}
+            )) : <p className="text-sm text-slate-800">No active reservations.</p>}
           </div>
         </article>
-        <article className="rounded-[2rem] border border-rose-100 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+        <article className="rounded-[2rem] border border-rose-800 bg-white p-6 shadow-xl shadow-slate-200/60">
           <h2 className="font-display text-3xl text-slate-950">Overdue notifications</h2>
           <div className="mt-4 space-y-3">
             {(profile.notifications || []).filter((item) => item.type === 'overdue').length ? (
@@ -172,17 +172,17 @@ export default function ProfilePage() {
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-500">No overdue reminders.</p>
+              <p className="text-sm text-slate-800">No overdue reminders.</p>
             )}
           </div>
         </article>
-        <article className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+        <article className="rounded-[2rem] border border-slate-300 bg-white p-6 shadow-xl shadow-slate-200/60">
           <h2 className="font-display text-3xl text-slate-950">All notifications</h2>
           <div className="mt-4 space-y-3">
             {profile.notifications.map((item) => (
               <div key={item._id} className="rounded-2xl bg-slate-100 p-4">
                 <p className="font-semibold text-slate-900">{item.title}</p>
-                <p className="text-sm text-slate-600">{item.message}</p>
+                <p className="text-sm text-slate-800">{item.message}</p>
               </div>
             ))}
           </div>

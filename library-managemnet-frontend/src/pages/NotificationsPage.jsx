@@ -41,15 +41,15 @@ export default function NotificationsPage() {
   const getTypeColor = (type) => {
     switch (type) {
       case 'overdue':
-        return 'bg-rose-50 border-rose-200 text-rose-900';
+        return 'bg-rose-50 border-rose-800 text-rose-950';
       case 'reservation':
-        return 'bg-teal-50 border-teal-200 text-teal-900';
+        return 'bg-teal-50 border-teal-800 text-teal-950';
       case 'payment':
-        return 'bg-amber-50 border-amber-200 text-amber-900';
+        return 'bg-amber-50 border-amber-800 text-amber-950';
       case 'announcement':
-        return 'bg-indigo-50 border-indigo-200 text-indigo-900';
+        return 'bg-indigo-50 border-indigo-800 text-indigo-950';
       default:
-        return 'bg-slate-50 border-slate-200 text-slate-900';
+        return 'bg-white border-slate-400 text-slate-950';
     }
   };
 
@@ -76,14 +76,14 @@ export default function NotificationsPage() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
-        <div className="flex items-center justify-between">
+      <div className="page-card">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-4xl text-slate-950">Notifications</h1>
-            <p className="mt-2 text-slate-600">Stay updated on your library activities, overdue books, and reservations.</p>
+            <h1 className="page-title">Notifications</h1>
+            <p className="page-copy mt-2">Stay updated on your library activities, overdue books, and reservations.</p>
           </div>
           {unreadCount > 0 && (
-            <div className="rounded-full bg-rose-100 px-4 py-2 text-rose-700 font-semibold">
+            <div className="rounded-full bg-rose-800 px-4 py-2 font-semibold text-white">
               {unreadCount} unread
             </div>
           )}
@@ -91,19 +91,19 @@ export default function NotificationsPage() {
       </div>
 
       {message && (
-        <p className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-800">
+        <p className="rounded-xl border border-slate-800 bg-slate-100 px-4 py-3 text-sm text-slate-950">
           {message}
         </p>
       )}
 
-      <div className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+      <div className="page-card">
         <div className="mb-6 flex flex-wrap items-center gap-2">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
               filter === 'all'
                 ? 'bg-slate-950 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                : 'border border-slate-400 bg-white text-slate-900'
             }`}
           >
             All
@@ -112,8 +112,8 @@ export default function NotificationsPage() {
             onClick={() => setFilter('overdue')}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
               filter === 'overdue'
-                ? 'bg-rose-600 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'bg-rose-800 text-white'
+                : 'border border-slate-400 bg-white text-slate-900'
             }`}
           >
             Overdue
@@ -122,8 +122,8 @@ export default function NotificationsPage() {
             onClick={() => setFilter('reservation')}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
               filter === 'reservation'
-                ? 'bg-teal-600 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'bg-teal-800 text-white'
+                : 'border border-slate-400 bg-white text-slate-900'
             }`}
           >
             Reservations
@@ -132,8 +132,8 @@ export default function NotificationsPage() {
             onClick={() => setFilter('payment')}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
               filter === 'payment'
-                ? 'bg-amber-600 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'bg-amber-800 text-white'
+                : 'border border-slate-400 bg-white text-slate-900'
             }`}
           >
             Payments
@@ -142,8 +142,8 @@ export default function NotificationsPage() {
             onClick={() => setFilter('announcement')}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
               filter === 'announcement'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'bg-indigo-800 text-white'
+                : 'border border-slate-400 bg-white text-slate-900'
             }`}
           >
             Announcements
@@ -152,32 +152,32 @@ export default function NotificationsPage() {
 
         <div className="space-y-3">
           {filteredNotifications.length === 0 ? (
-            <p className="py-8 text-center text-slate-500">No notifications at the moment.</p>
+            <p className="py-8 text-center text-slate-800">No notifications at the moment.</p>
           ) : (
             filteredNotifications.map((notification) => (
               <div
                 key={notification._id}
                 className={`rounded-xl border-2 p-4 transition ${getTypeColor(notification.type)} ${
-                  !notification.read ? 'bg-opacity-100' : 'opacity-75'
+                  !notification.read ? '' : 'border-slate-400'
                 }`}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xl">{getTypeIcon(notification.type)}</span>
                       <h3 className="font-semibold">{notification.title}</h3>
                       {!notification.read && (
-                        <span className="ml-auto text-xs font-bold bg-current bg-opacity-20 px-2 py-1 rounded-full">
+                        <span className="rounded-full bg-slate-900 px-2 py-1 text-xs font-bold text-white">
                           NEW
                         </span>
                       )}
                     </div>
-                    <p className="text-sm opacity-90 mb-2">{notification.message}</p>
-                    <p className="text-xs opacity-60">
+                    <p className="mb-2 text-sm text-slate-900">{notification.message}</p>
+                    <p className="text-xs text-slate-800">
                       {new Date(notification.createdAt).toLocaleString()}
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
                       {!notification.read && (
                         <button
                           onClick={() => handleMarkAsRead(notification._id)}

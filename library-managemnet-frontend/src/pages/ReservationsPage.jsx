@@ -47,21 +47,21 @@ export default function ReservationsPage() {
   const getStatusStyle = (status) => {
     switch ((status || '').toLowerCase()) {
       case 'ready':
-        return 'bg-teal-100 text-teal-700';
+        return 'bg-teal-800 text-white';
       case 'cancelled':
-        return 'bg-slate-100 text-slate-600';
+        return 'bg-slate-800 text-white';
       case 'fulfilled':
-        return 'bg-indigo-100 text-indigo-700';
+        return 'bg-indigo-800 text-white';
       default:
-        return 'bg-amber-100 text-amber-700';
+        return 'bg-amber-200 text-amber-950';
     }
   };
 
   return (
     <section className="space-y-6">
-      <div className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
-        <h1 className="font-display text-4xl text-slate-950">Reservations</h1>
-        <p className="mt-2 text-slate-600">See queued reservations for books that currently have no copies to borrow.</p>
+      <div className="page-card">
+        <h1 className="page-title">Reservations</h1>
+        <p className="page-copy mt-2">See queued reservations for books that currently have no copies to borrow.</p>
       </div>
 
       <StatusMessage type={messageType}>{message}</StatusMessage>
@@ -75,14 +75,14 @@ export default function ReservationsPage() {
           return (
             <article key={reservation._id} className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/60">
               <h2 className="text-2xl font-semibold text-slate-950">{reservation.book?.title}</h2>
-              <p className="text-sm text-slate-500">{reservation.book?.author}</p>
+              <p className="text-sm text-slate-800">{reservation.book?.author}</p>
               <div className="mt-3 flex items-center gap-2">
-                <span className="text-sm text-slate-600">Status:</span>
+                <span className="text-sm text-slate-800">Status:</span>
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${getStatusStyle(normalizedStatus)}`}>
                   {reservation.status}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-slate-600">Queue position: {reservation.queuePosition}</p>
+              <p className="mt-2 text-sm text-slate-800">Queue position: {reservation.queuePosition}</p>
 
               {canCancel ? (
                 <button
@@ -97,7 +97,7 @@ export default function ReservationsPage() {
                   {isProcessing ? 'Cancelling...' : 'Cancel reservation'}
                 </button>
               ) : (
-                <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">No actions available</p>
+                <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-800">No actions available</p>
               )}
             </article>
           );

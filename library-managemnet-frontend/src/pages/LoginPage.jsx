@@ -64,9 +64,9 @@ export default function LoginPage() {
   };
 
   return (
-    <section className="mx-auto max-w-md rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-2xl shadow-slate-300/40">
-      <h1 className="font-display text-4xl text-slate-950">Welcome back</h1>
-      <p className="mt-2 text-slate-500">Sign in to manage books, returns, payments, and reservations.</p>
+    <section className="mx-auto max-w-md rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+      <h1 className="page-title">Welcome back</h1>
+      <p className="mt-2 text-slate-700">Sign in to manage books, returns, payments, and reservations.</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4" noValidate>
         <div>
@@ -138,7 +138,7 @@ export default function LoginPage() {
             }
           }}
         >
-          <p className="text-sm text-slate-600">Enter your account email to receive a password reset link.</p>
+          <p className="text-sm text-slate-800">Enter your account email to receive a password reset link.</p>
           <input
             type="email"
             placeholder="Account email"
@@ -146,15 +146,15 @@ export default function LoginPage() {
             onChange={(event) => setResetEmail(event.target.value)}
           />
           <StatusMessage type={resetType}>{resetMessage}</StatusMessage>
-          <button type="submit" className="w-full rounded-2xl bg-teal-600 px-4 py-3 font-semibold text-white">
+          <button type="submit" className="w-full rounded-2xl bg-teal-800 px-4 py-3 font-semibold text-white">
             Send reset link
           </button>
         </form>
       )}
 
-      <aside className="mt-6 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-slate-700">
+      <aside className="mt-6 rounded-2xl border border-teal-700 bg-teal-50 p-4 text-sm text-slate-800">
         <p className="font-semibold text-slate-900">Demo credentials</p>
-        <p className="mt-1 text-xs text-slate-600">Use these seeded accounts to test every role. Click a button to fill the form.</p>
+        <p className="mt-1 text-xs text-slate-800">Use these seeded accounts to test every role. Click a button to fill the form.</p>
         <div className="mt-3 space-y-2">
           {demoAccounts.map((account) => (
             <button
@@ -169,7 +169,7 @@ export default function LoginPage() {
             >
               <span>
                 <span className="font-semibold text-slate-900">{account.role}</span>
-                <span className="mt-0.5 block text-xs text-slate-500">{account.email} / {account.password}</span>
+                <span className="mt-0.5 block text-xs text-slate-800">{account.email} / {account.password}</span>
               </span>
               <span className="text-xs font-semibold text-teal-700">Use</span>
             </button>
@@ -177,7 +177,7 @@ export default function LoginPage() {
         </div>
       </aside>
 
-      <p className="mt-6 text-sm text-slate-600">
+      <p className="mt-6 text-sm text-slate-800">
         Need an account?{' '}
         <Link to="/register" className="font-semibold text-teal-700">Register here</Link>
       </p>

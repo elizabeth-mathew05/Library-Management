@@ -39,9 +39,9 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <section className="mx-auto max-w-md rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-2xl shadow-slate-300/40">
-      <h1 className="font-display text-4xl text-slate-950">Reset password</h1>
-      <p className="mt-2 text-slate-500">Set a new account password using your email reset link.</p>
+    <section className="page-card mx-auto max-w-md">
+      <h1 className="page-title">Reset password</h1>
+      <p className="page-copy mt-2">Set a new account password using your email reset link.</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <input
@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-sm text-slate-600">
+      <p className="mt-6 text-sm text-slate-800">
         Back to <Link to="/login" className="font-semibold text-teal-700">Login</Link>
       </p>
     </section>

@@ -58,9 +58,9 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
-        <h1 className="font-display text-4xl text-slate-950">Review Management</h1>
-        <p className="mt-2 text-slate-600">Search, moderate, and remove user reviews across the full catalog.</p>
+      <section className="rounded-[2rem] border border-slate-300 bg-white p-6 shadow-xl shadow-slate-200/60">
+        <h1 className="page-title">Review Management</h1>
+        <p className="mt-2 text-slate-800">Search, moderate, and remove user reviews across the full catalog.</p>
 
         <form onSubmit={handleSearch} className="mt-6 grid gap-4 lg:grid-cols-[2fr,1fr,1fr,auto]">
           <input
@@ -86,15 +86,15 @@ export default function AdminReviewsPage() {
       </section>
 
       {message && (
-        <section className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-800">
+        <section className="rounded-xl border border-slate-800 bg-slate-100 px-4 py-3 text-sm text-slate-950">
           {message}
         </section>
       )}
 
-      <section className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+      <section className="rounded-[2rem] border border-slate-300 bg-white p-6 shadow-xl shadow-slate-200/60">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="text-slate-500">
+            <thead className="text-slate-800">
               <tr>
                 <th className="pb-3">Book</th>
                 <th className="pb-3">User</th>
@@ -109,16 +109,16 @@ export default function AdminReviewsPage() {
                 <tr key={review._id} className="border-t border-slate-200 align-top">
                   <td className="py-4">
                     <p className="font-semibold text-slate-900">{review.book?.title}</p>
-                    <p className="text-xs text-slate-500">{review.book?.author}</p>
+                    <p className="text-xs text-slate-800">{review.book?.author}</p>
                   </td>
                   <td className="py-4">
                     <p className="font-semibold text-slate-900">{review.user?.name}</p>
-                    <p className="text-xs text-slate-500">{review.user?.email}</p>
+                    <p className="text-xs text-slate-800">{review.user?.email}</p>
                   </td>
                   <td className="py-4">{review.rating}/5</td>
                   <td className="py-4 max-w-sm text-slate-700">{review.comment}</td>
                   <td className="py-4">
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${review.moderated ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'}`}>
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${review.moderated ? 'bg-amber-100 text-amber-950' : 'bg-slate-200 text-slate-900'}`}>
                       {review.moderated ? 'Yes' : 'No'}
                     </span>
                   </td>
@@ -126,13 +126,13 @@ export default function AdminReviewsPage() {
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => handleModeration(review._id, !review.moderated)}
-                        className="rounded-full bg-amber-400 px-3 py-2 text-xs font-semibold text-slate-950"
+                        className="rounded-full bg-slate-800 px-3 py-2 text-xs font-semibold text-white"
                       >
                         {review.moderated ? 'Unmoderate' : 'Moderate'}
                       </button>
                       <button
                         onClick={() => handleDelete(review._id)}
-                        className="rounded-full bg-rose-600 px-3 py-2 text-xs font-semibold text-white"
+                        className="rounded-full bg-rose-800 px-3 py-2 text-xs font-semibold text-white"
                       >
                         Delete
                       </button>
@@ -145,7 +145,7 @@ export default function AdminReviewsPage() {
         </div>
 
         {!reviews.length && (
-          <p className="mt-4 text-sm text-slate-500">No reviews match the current filters.</p>
+          <p className="mt-4 text-sm text-slate-800">No reviews match the current filters.</p>
         )}
       </section>
     </div>

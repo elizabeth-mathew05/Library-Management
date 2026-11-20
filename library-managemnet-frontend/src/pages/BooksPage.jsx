@@ -180,7 +180,7 @@ export default function BooksPage() {
     }
 
     if (!canReserveBook(book)) {
-      showNotice('Reserve is for checked-out or high-demand titles. Borrow this copy instead.', 'error');
+      showNotice('Reserve is only for books with no remaining copies. Borrow this copy instead.', 'error');
       return;
     }
 
@@ -203,8 +203,8 @@ export default function BooksPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
-        <form onSubmit={handleSearch} className="grid items-center gap-4 lg:grid-cols-[2fr,1fr,1fr,1fr,auto]">
+      <section className="page-card">
+        <form onSubmit={handleSearch} className="grid items-center gap-3 sm:grid-cols-2 lg:grid-cols-[2fr,1fr,1fr,1fr,auto]">
           <input
             placeholder="Search by title, author, genre, or ISBN"
             value={filters.search}
@@ -230,16 +230,16 @@ export default function BooksPage() {
             value={filters.year}
             onChange={(event) => setFilters({ ...filters, year: event.target.value })}
           />
-          <button type="submit" className="rounded-2xl bg-slate-950 px-5 py-3 font-semibold text-white">Search</button>
+          <button type="submit" className="w-full rounded-2xl bg-slate-950 px-5 py-3 font-semibold text-white sm:w-auto">Search</button>
         </form>
       </section>
 
       {isStaff && (
-        <section className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+        <section className="page-card">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="font-display text-3xl text-slate-950">Inventory Management</h2>
-              <p className="text-sm text-slate-600">Add and update books. Delete is restricted to admins.</p>
+              <h2 className="page-title">Inventory Management</h2>
+              <p className="page-copy">Add and update books. Delete is restricted to admins.</p>
             </div>
             <button
               onClick={() => {
@@ -248,7 +248,7 @@ export default function BooksPage() {
                 setFieldErrors({});
                 setShowBookForm(true);
               }}
-              className="rounded-2xl bg-amber-400 px-5 py-3 font-semibold text-slate-950"
+              className="rounded-2xl bg-slate-900 px-5 py-3 font-semibold text-white"
             >
               Add Book
             </button>
@@ -258,11 +258,11 @@ export default function BooksPage() {
 
       {showBookForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4">
-          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] border border-white/60 bg-white p-6 shadow-2xl shadow-slate-950/20">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-300 bg-white p-4 shadow-2xl shadow-slate-950/20 sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h2 className="font-display text-3xl text-slate-950">{editingBookId ? 'Edit Book' : 'Add Book'}</h2>
-                <p className="text-sm text-slate-600">Publication year must be between {MIN_PUBLICATION_YEAR} and {CURRENT_YEAR}.</p>
+                <p className="page-copy">Publication year must be between {MIN_PUBLICATION_YEAR} and {CURRENT_YEAR}.</p>
               </div>
               <button type="button" onClick={resetForm} className="rounded-2xl border border-slate-300 px-4 py-3 font-semibold text-slate-700">
                 Close
@@ -344,10 +344,10 @@ export default function BooksPage() {
       <StatusMessage type={messageType}>{message}</StatusMessage>
 
       <section className="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-700">
-        Search by title, author, genre, or ISBN, then filter by genre, status, or year. Borrow when copies are on the shelf. Reserve when a title is checked out or already in high demand. Reviews appear after you return a book.
+        Search by title, author, genre, or ISBN. Borrow when copies are available. Reserve only when a title has 0 copies left. Pay late fees from Borrowed through the payment gateway.
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {books.map((book) => (
           <BookCard
             key={book._id}

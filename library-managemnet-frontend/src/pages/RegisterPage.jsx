@@ -79,9 +79,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <section className="mx-auto max-w-xl rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-2xl shadow-slate-300/40">
-      <h1 className="font-display text-4xl text-slate-950">Create account</h1>
-      <p className="mt-2 text-sm text-slate-500">New accounts are created as members. Use the demo admin or librarian credentials on the login page to test staff tools.</p>
+    <section className="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+      <h1 className="page-title">Create account</h1>
+      <p className="mt-2 text-sm text-slate-700">New accounts are created as members. Use the demo admin or librarian credentials on the login page to test staff tools.</p>
       <form onSubmit={handleSubmit} className="mt-8 grid gap-4 md:grid-cols-2" noValidate>
         <div className="md:col-span-2">
           <input
@@ -125,11 +125,11 @@ export default function RegisterPage() {
         <div className="md:col-span-2">
           <StatusMessage type="error">{error}</StatusMessage>
         </div>
-        <button type="submit" className="rounded-2xl bg-teal-600 px-4 py-3 font-semibold text-white md:col-span-2">
+        <button type="submit" className="rounded-2xl bg-teal-800 px-4 py-3 font-semibold text-white md:col-span-2">
           Register
         </button>
       </form>
-      <p className="mt-6 text-sm text-slate-600">
+      <p className="mt-6 text-sm text-slate-800">
         Already have an account? <Link to="/login" className="font-semibold text-teal-700">Login here</Link>
       </p>
     </section>

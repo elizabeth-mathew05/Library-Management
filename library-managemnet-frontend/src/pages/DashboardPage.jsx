@@ -12,7 +12,7 @@ const roleCopy = {
     helper: 'This account can borrow available books, reserve titles that are out of stock, and pay late fees.',
     capabilities: [
       'Borrow a book when copies are available.',
-      'Reserve a book when it is checked out or already in high demand.',
+      'Reserve a book only when no copies are left to borrow.',
       'Return books, see accruing late fees ($2/day), and pay fines from Borrowed.'
     ]
   },
@@ -102,10 +102,10 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[2rem] bg-slate-950 px-8 py-10 text-white shadow-2xl shadow-slate-400/30">
-        <p className="text-sm uppercase tracking-[0.3em] text-teal-300">{roleHero[currentRole].eyebrow}</p>
-        <h1 className="mt-3 font-display text-5xl">{roleHero[currentRole].title}</h1>
-        <p className="mt-4 max-w-3xl text-lg text-slate-300">
+      <section className="hero-banner">
+        <p className="text-sm font-bold uppercase text-white">{roleHero[currentRole].eyebrow}</p>
+        <h1 className="page-title mt-3 text-white">{roleHero[currentRole].title}</h1>
+        <p className="mt-3 max-w-3xl text-base text-white">
           {roleHero[currentRole].description}
         </p>
       </section>
@@ -121,12 +121,12 @@ export default function DashboardPage() {
         <StatCard title="Notifications" value={profileData?.notifications?.length || 0} helper="Reservation and overdue reminders." />
       </section>
 
-      <section className="rounded-[2rem] border border-white/60 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
-        <h2 className="font-display text-3xl text-slate-950">What this account can do</h2>
-        <p className="mt-2 text-sm text-slate-600">
+      <section className="page-card">
+        <h2 className="page-title">What this account can do</h2>
+        <p className="page-copy mt-2">
           Menus and buttons change by account type. You are signed in as <strong>{access.label}</strong>, so you can:
         </p>
-        <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700">
+        <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-800">
           {access.capabilities.map((item) => (
             <li key={item}>{item}</li>
           ))}
@@ -134,33 +134,33 @@ export default function DashboardPage() {
       </section>
 
       {currentRole === 'user' && (
-        <section className="rounded-[2rem] border border-rose-100 bg-white/90 p-6 shadow-xl shadow-slate-200/60">
+        <section className="page-card border-rose-300">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="font-display text-3xl text-slate-950">Late fees</h2>
-              <p className="mt-2 max-w-2xl text-sm text-slate-600">
+              <h2 className="font-display text-2xl text-slate-950 sm:text-3xl">Late fees</h2>
+              <p className="page-copy mt-2 max-w-2xl">
                 Overdue books accrue ${LATE_FEE_PER_DAY} per day. Return an overdue title to lock the fee, then pay it from Borrowed.
                 The demo member already has an overdue copy of The Hobbit and an unpaid $10 fee on Moby-Dick.
               </p>
             </div>
-            <Link to="/borrowed" className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-semibold text-white">
+            <Link to="/borrowed" className="rounded-2xl bg-rose-700 px-5 py-3 text-sm font-semibold text-white">
               Open Borrowed
             </Link>
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-3">
-            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
-              <p className="text-sm font-semibold text-rose-700">Overdue now</p>
-              <p className="mt-1 text-3xl font-bold text-rose-900">{lateFeeSummary.overdueCount}</p>
-              <p className="mt-1 text-xs text-rose-700">Accruing ${lateFeeSummary.accruing.toFixed(2)}</p>
+            <div className="rounded-2xl border border-rose-800 bg-rose-50 p-4">
+              <p className="text-sm font-bold text-rose-950">Overdue now</p>
+              <p className="mt-1 text-3xl font-bold text-slate-950">{lateFeeSummary.overdueCount}</p>
+              <p className="mt-1 text-sm text-rose-950">Accruing ${lateFeeSummary.accruing.toFixed(2)}</p>
             </div>
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <p className="text-sm font-semibold text-amber-700">Unpaid after return</p>
-              <p className="mt-1 text-3xl font-bold text-amber-900">{lateFeeSummary.unpaidCount}</p>
-              <p className="mt-1 text-xs text-amber-700">Due ${lateFeeSummary.unpaidTotal.toFixed(2)}</p>
+            <div className="rounded-2xl border border-amber-800 bg-amber-50 p-4">
+              <p className="text-sm font-bold text-amber-950">Unpaid after return</p>
+              <p className="mt-1 text-3xl font-bold text-slate-950">{lateFeeSummary.unpaidCount}</p>
+              <p className="mt-1 text-sm text-amber-950">Due ${lateFeeSummary.unpaidTotal.toFixed(2)}</p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-sm font-semibold text-slate-700">How to test</p>
-              <p className="mt-2 text-sm text-slate-600">Sign in as user1@gmail.com, open Borrowed, return The Hobbit, then pay the Moby-Dick fee.</p>
+            <div className="rounded-2xl border border-slate-400 bg-slate-50 p-4">
+              <p className="text-sm font-bold text-slate-950">How to test</p>
+              <p className="mt-2 text-sm text-slate-800">Sign in as user1@gmail.com, open Borrowed, return The Hobbit, then pay the Moby-Dick fee.</p>
             </div>
           </div>
         </section>
