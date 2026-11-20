@@ -1,7 +1,10 @@
+import dns from 'node:dns';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+dns.setDefaultResultOrder('ipv4first');
 
 const defaultDatabaseName = process.env.MONGO_DB_NAME || 'library_management';
 const connectRetries = Number(process.env.MONGO_CONNECT_RETRIES || 5);
@@ -52,7 +55,7 @@ const connectDatabase = async () => {
   ];
 
   const matched = envCandidates.find(([, value]) => Boolean(value));
-  const mongoUri = matched?.[1];
+  const mongoUri = matched?.[1]?.trim().replace(/^['"]|['"]$/g, '');
   const sourceKey = matched?.[0];
 
   if (!mongoUri) {
@@ -83,7 +86,10 @@ const connectDatabase = async () => {
 
   for (let attempt = 1; attempt <= connectRetries; attempt += 1) {
     try {
-      await mongoose.connect(normalizedMongoUri);
+      await mongoose.connect(normalizedMongoUri, {
+        family: 4,
+        serverSelectionTimeoutMS: 15000
+      });
       console.log(`MongoDB connected using ${sourceKey} -> ${safeTarget}`);
       return;
     } catch (error) {
