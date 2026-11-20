@@ -46,7 +46,7 @@ const loginUser = asyncHandler(async (req, res) => {
   ensureValidRequest(req);
 
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: String(email || '').trim().toLowerCase() });
 
   if (!user || !(await user.matchPassword(password))) {
     res.status(401);

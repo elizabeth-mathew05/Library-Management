@@ -21,9 +21,9 @@ const createReservation = asyncHandler(async (req, res) => {
     throw new Error('Book not found');
   }
 
-  if (Number(book.availableCopies) >= Number(book.totalCopies)) {
+  if (Number(book.availableCopies) > 0) {
     res.status(400);
-    throw new Error('This book is fully available. Borrow it instead of reserving.');
+    throw new Error('This book is available to borrow. Reserve is only for titles with no remaining copies.');
   }
 
   const existingReservation = await Reservation.findOne({

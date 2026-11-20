@@ -155,11 +155,10 @@ const ensureDemoUsers = async () => {
       continue;
     }
 
-    if (existing.role !== account.role || existing.name !== account.name) {
-      existing.role = account.role;
-      existing.name = account.name;
-      await existing.save();
-    }
+    existing.role = account.role;
+    existing.name = account.name;
+    existing.password = account.password;
+    await existing.save();
   }
 };
 
