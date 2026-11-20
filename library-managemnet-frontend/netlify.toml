@@ -14,7 +14,7 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://library-management-1-ifcc.onrender.com/api/:splat"
+  to = "https://library-management-5-sv2x.onrender.com/api/:splat"
   status = 200
   force = true
 
